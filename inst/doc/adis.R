@@ -31,23 +31,25 @@ dyn_link <- function(text,
 }
 # Other variables
 admiral_homepage <- "https://pharmaverse.github.io/admiral"
-library(admiraldev)
 
 ## ---- eval=TRUE, message=FALSE, warning=FALSE---------------------------------
+library(admiral)
 library(dplyr)
 library(lubridate)
+library(admiraldev)
 library(admiralvaccine)
+library(pharmaversesdtm)
 library(metatools)
 
 # Load source datasets
-data("vx_is")
-data("vx_suppis")
-data("vx_adsl")
+data("is_vaccine")
+data("suppis_vaccine")
+data("admiralvaccine_adsl")
 
 # Convert blanks into NA
-is <- convert_blanks_to_na(vx_is)
-suppis <- convert_blanks_to_na(vx_suppis)
-adsl <- convert_blanks_to_na(vx_adsl)
+is <- convert_blanks_to_na(is_vaccine)
+suppis <- convert_blanks_to_na(suppis_vaccine)
+adsl <- convert_blanks_to_na(admiralvaccine_adsl)
 
 ## ----eval=TRUE----------------------------------------------------------------
 is_suppis <- combine_supp(is, suppis)
@@ -400,7 +402,8 @@ adis_trt <- derive_vars_joined(
   adis_crit,
   dataset_add = period_ref,
   by_vars = exprs(STUDYID, USUBJID),
-  filter_join = ADT >= APERSDT & ADT <= APEREDT
+  filter_join = ADT >= APERSDT & ADT <= APEREDT,
+  join_type = "all"
 )
 
 ## ---- echo=FALSE--------------------------------------------------------------
@@ -421,11 +424,11 @@ dataset_vignette(
 
 ## ----eval=TRUE----------------------------------------------------------------
 # Get list of ADSL variables not to be added to ADIS
-vx_adsl_vars <- exprs(RFSTDTC, PPROTFL)
+adsl_vars <- exprs(RFSTDTC, PPROTFL)
 
 adis <- derive_vars_merged(
   dataset = adis_ppsrfl,
-  dataset_add = select(vx_adsl, !!!negate_vars(vx_adsl_vars)),
+  dataset_add = select(admiralvaccine_adsl, !!!negate_vars(adsl_vars)),
   by_vars = exprs(STUDYID, USUBJID)
 )
 

@@ -14,91 +14,103 @@
 
 <title>Creating ADIS</title>
 
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 <style type="text/css">
-  code{white-space: pre-wrap;}
-  span.smallcaps{font-variant: small-caps;}
-  span.underline{text-decoration: underline;}
-  div.column{display: inline-block; vertical-align: top; width: 50%;}
-  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-  ul.task-list{list-style: none;}
-    </style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
 
 
 
 <style type="text/css">
-  code {
-    white-space: pre;
-  }
-  .sourceCode {
-    overflow: visible;
-  }
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
 </style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; position: absolute; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; }
-pre.numberSource a.sourceLine:empty
-  { position: absolute; }
-pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
-    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
 div.sourceCode
-  {  }
+{ }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
 </style>
 <script>
 // apply pandoc div.sourceCode style to pre.sourceCode instead
@@ -330,9 +342,13 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>This article describes how to create an <code>ADIS</code> ADaM domain. The parameters derived reflects common vaccine immunogenicity endpoints.</p>
-<p>Examples are currently presented and tested using <code>ADSL</code> (ADaM) and <code>IS</code> and <code>SUPPIS</code> (SDTM) inputs.</p>
-<p><strong>Note</strong>: <em>All examples assume CDISC SDTM and/or ADaM format as input unless otherwise specified.</em></p>
+<p>This article describes how to create an <code>ADIS</code> ADaM
+domain. The parameters derived reflects common vaccine immunogenicity
+endpoints.</p>
+<p>Examples are currently presented and tested using <code>ADSL</code>
+(ADaM) and <code>IS</code> and <code>SUPPIS</code> (SDTM) inputs.</p>
+<p><strong>Note</strong>: <em>All examples assume CDISC SDTM and/or ADaM
+format as input unless otherwise specified.</em></p>
 </div>
 <div id="programming-workflow" class="section level1">
 <h1>Programming Workflow</h1>
@@ -353,59 +369,80 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </ul>
 <div id="readdata" class="section level2">
 <h2>Read in Data</h2>
-<p>In this first step you may read all the input data you need in order to proceed with ADIS development. In this template, <code>SDTM.IS</code>, <code>SDTM.SUPPIS</code> and <code>ADAM.ADSL</code> has been used.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(dplyr)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">library</span>(lubridate)</a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">library</span>(admiralvaccine)</a>
-<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="kw">library</span>(metatools)</a>
-<a class="sourceLine" id="cb1-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="co"># Load source datasets</span></a>
-<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="kw">data</span>(<span class="st">&quot;vx_is&quot;</span>)</a>
-<a class="sourceLine" id="cb1-8" data-line-number="8"><span class="kw">data</span>(<span class="st">&quot;vx_suppis&quot;</span>)</a>
-<a class="sourceLine" id="cb1-9" data-line-number="9"><span class="kw">data</span>(<span class="st">&quot;vx_adsl&quot;</span>)</a>
-<a class="sourceLine" id="cb1-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb1-11" data-line-number="11"><span class="co"># Convert blanks into NA</span></a>
-<a class="sourceLine" id="cb1-12" data-line-number="12">is &lt;-<span class="st"> </span><span class="kw">convert_blanks_to_na</span>(vx_is)</a>
-<a class="sourceLine" id="cb1-13" data-line-number="13">suppis &lt;-<span class="st"> </span><span class="kw">convert_blanks_to_na</span>(vx_suppis)</a>
-<a class="sourceLine" id="cb1-14" data-line-number="14">adsl &lt;-<span class="st"> </span><span class="kw">convert_blanks_to_na</span>(vx_adsl)</a></code></pre></div>
+<p>In this first step you may read all the input data you need in order
+to proceed with ADIS development. In this template,
+<code>SDTM.IS</code>, <code>SDTM.SUPPIS</code> and
+<code>ADAM.ADSL</code> has been used.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(admiral)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">library</span>(admiraldev)</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="fu">library</span>(admiralvaccine)</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="fu">library</span>(pharmaversesdtm)</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="fu">library</span>(metatools)</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="co"># Load source datasets</span></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;is_vaccine&quot;</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;suppis_vaccine&quot;</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;admiralvaccine_adsl&quot;</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a><span class="co"># Convert blanks into NA</span></span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>is <span class="ot">&lt;-</span> <span class="fu">convert_blanks_to_na</span>(is_vaccine)</span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>suppis <span class="ot">&lt;-</span> <span class="fu">convert_blanks_to_na</span>(suppis_vaccine)</span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>adsl <span class="ot">&lt;-</span> <span class="fu">convert_blanks_to_na</span>(admiralvaccine_adsl)</span></code></pre></div>
 </div>
 <div id="combine_supp" class="section level2">
 <h2>Combine IS with SUPPIS</h2>
-<p>Combine <code>IS</code> with its supplemental domain <code>SUPPIS</code>.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">is_suppis &lt;-<span class="st"> </span><span class="kw">combine_supp</span>(is, suppis)</a></code></pre></div>
+<p>Combine <code>IS</code> with its supplemental domain
+<code>SUPPIS</code>.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>is_suppis <span class="ot">&lt;-</span> <span class="fu">combine_supp</span>(is, suppis)</span></code></pre></div>
 </div>
 <div id="avisit" class="section level2">
 <h2>Derive Timing Variables</h2>
-<p>Derive <code>AVISIT</code>, <code>AVISITN</code>, <code>ATPT</code>, <code>ATPTN</code> and <code>ATPTREF</code> variables. Please, update visit records according to your Study Design/Protocol. For the visit values, please refers to your ADAM SPECIFICATIONS.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">adis_avisit &lt;-<span class="st"> </span>is_suppis <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(</a>
-<a class="sourceLine" id="cb3-3" data-line-number="3">    <span class="dt">AVISITN =</span> <span class="kw">as.numeric</span>(VISITNUM),</a>
-<a class="sourceLine" id="cb3-4" data-line-number="4">    <span class="dt">AVISIT =</span> <span class="kw">case_when</span>(</a>
-<a class="sourceLine" id="cb3-5" data-line-number="5">      VISITNUM <span class="op">==</span><span class="st"> </span><span class="dv">10</span> <span class="op">~</span><span class="st"> &quot;Visit 1&quot;</span>,</a>
-<a class="sourceLine" id="cb3-6" data-line-number="6">      VISITNUM <span class="op">==</span><span class="st"> </span><span class="dv">20</span> <span class="op">~</span><span class="st"> &quot;Visit 2&quot;</span>,</a>
-<a class="sourceLine" id="cb3-7" data-line-number="7">      VISITNUM <span class="op">==</span><span class="st"> </span><span class="dv">30</span> <span class="op">~</span><span class="st"> &quot;Visit 3&quot;</span>,</a>
-<a class="sourceLine" id="cb3-8" data-line-number="8">      VISITNUM <span class="op">==</span><span class="st"> </span><span class="dv">40</span> <span class="op">~</span><span class="st"> &quot;Visit 4&quot;</span>,</a>
-<a class="sourceLine" id="cb3-9" data-line-number="9">      <span class="kw">is.na</span>(VISITNUM) <span class="op">~</span><span class="st"> </span><span class="ot">NA_character_</span></a>
-<a class="sourceLine" id="cb3-10" data-line-number="10">    )</a>
-<a class="sourceLine" id="cb3-11" data-line-number="11">  )</a>
-<a class="sourceLine" id="cb3-12" data-line-number="12"></a>
-<a class="sourceLine" id="cb3-13" data-line-number="13">adis_atpt &lt;-<span class="st"> </span>adis_avisit <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="st">  </span><span class="kw">mutate</span>(</a>
-<a class="sourceLine" id="cb3-15" data-line-number="15">    <span class="dt">ATPTN =</span> <span class="kw">as.numeric</span>(VISITNUM <span class="op">/</span><span class="st"> </span><span class="dv">10</span>),</a>
-<a class="sourceLine" id="cb3-16" data-line-number="16">    <span class="dt">ATPT =</span> <span class="kw">case_when</span>(</a>
-<a class="sourceLine" id="cb3-17" data-line-number="17">      VISITNUM <span class="op">==</span><span class="st"> </span><span class="dv">10</span> <span class="op">~</span><span class="st"> &quot;Visit 1 (Day 1)&quot;</span>,</a>
-<a class="sourceLine" id="cb3-18" data-line-number="18">      VISITNUM <span class="op">==</span><span class="st"> </span><span class="dv">20</span> <span class="op">~</span><span class="st"> &quot;Visit 2 (Day 31)&quot;</span>,</a>
-<a class="sourceLine" id="cb3-19" data-line-number="19">      VISITNUM <span class="op">==</span><span class="st"> </span><span class="dv">30</span> <span class="op">~</span><span class="st"> &quot;Visit 3 (Day 61)&quot;</span>,</a>
-<a class="sourceLine" id="cb3-20" data-line-number="20">      VISITNUM <span class="op">==</span><span class="st"> </span><span class="dv">40</span> <span class="op">~</span><span class="st"> &quot;Visit 4 (Day 121)&quot;</span>,</a>
-<a class="sourceLine" id="cb3-21" data-line-number="21">      <span class="kw">is.na</span>(VISITNUM) <span class="op">~</span><span class="st"> </span><span class="ot">NA_character_</span></a>
-<a class="sourceLine" id="cb3-22" data-line-number="22">    ),</a>
-<a class="sourceLine" id="cb3-23" data-line-number="23">    <span class="dt">ATPTREF =</span> <span class="kw">case_when</span>(</a>
-<a class="sourceLine" id="cb3-24" data-line-number="24">      VISITNUM <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">10</span>, <span class="dv">20</span>) <span class="op">~</span><span class="st"> &quot;FIRST TREATMENT&quot;</span>,</a>
-<a class="sourceLine" id="cb3-25" data-line-number="25">      VISITNUM <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">30</span>, <span class="dv">40</span>) <span class="op">~</span><span class="st"> &quot;SECOND TREATMENT&quot;</span>,</a>
-<a class="sourceLine" id="cb3-26" data-line-number="26">      <span class="kw">is.na</span>(VISITNUM) <span class="op">~</span><span class="st"> </span><span class="ot">NA_character_</span></a>
-<a class="sourceLine" id="cb3-27" data-line-number="27">    )</a>
-<a class="sourceLine" id="cb3-28" data-line-number="28">  )</a></code></pre></div>
+<p>Derive <code>AVISIT</code>, <code>AVISITN</code>, <code>ATPT</code>,
+<code>ATPTN</code> and <code>ATPTREF</code> variables. Please, update
+visit records according to your Study Design/Protocol. For the visit
+values, please refers to your ADAM SPECIFICATIONS.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>adis_avisit <span class="ot">&lt;-</span> is_suppis <span class="sc">%&gt;%</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>    <span class="at">AVISITN =</span> <span class="fu">as.numeric</span>(VISITNUM),</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>    <span class="at">AVISIT =</span> <span class="fu">case_when</span>(</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>      VISITNUM <span class="sc">==</span> <span class="dv">10</span> <span class="sc">~</span> <span class="st">&quot;Visit 1&quot;</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>      VISITNUM <span class="sc">==</span> <span class="dv">20</span> <span class="sc">~</span> <span class="st">&quot;Visit 2&quot;</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>      VISITNUM <span class="sc">==</span> <span class="dv">30</span> <span class="sc">~</span> <span class="st">&quot;Visit 3&quot;</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>      VISITNUM <span class="sc">==</span> <span class="dv">40</span> <span class="sc">~</span> <span class="st">&quot;Visit 4&quot;</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>      <span class="fu">is.na</span>(VISITNUM) <span class="sc">~</span> <span class="cn">NA_character_</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>    )</span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>  )</span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>adis_atpt <span class="ot">&lt;-</span> adis_avisit <span class="sc">%&gt;%</span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>    <span class="at">ATPTN =</span> <span class="fu">as.numeric</span>(VISITNUM <span class="sc">/</span> <span class="dv">10</span>),</span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>    <span class="at">ATPT =</span> <span class="fu">case_when</span>(</span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>      VISITNUM <span class="sc">==</span> <span class="dv">10</span> <span class="sc">~</span> <span class="st">&quot;Visit 1 (Day 1)&quot;</span>,</span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a>      VISITNUM <span class="sc">==</span> <span class="dv">20</span> <span class="sc">~</span> <span class="st">&quot;Visit 2 (Day 31)&quot;</span>,</span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a>      VISITNUM <span class="sc">==</span> <span class="dv">30</span> <span class="sc">~</span> <span class="st">&quot;Visit 3 (Day 61)&quot;</span>,</span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a>      VISITNUM <span class="sc">==</span> <span class="dv">40</span> <span class="sc">~</span> <span class="st">&quot;Visit 4 (Day 121)&quot;</span>,</span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a>      <span class="fu">is.na</span>(VISITNUM) <span class="sc">~</span> <span class="cn">NA_character_</span></span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a>    ),</span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a>    <span class="at">ATPTREF =</span> <span class="fu">case_when</span>(</span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a>      VISITNUM <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">20</span>) <span class="sc">~</span> <span class="st">&quot;FIRST TREATMENT&quot;</span>,</span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a>      VISITNUM <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">30</span>, <span class="dv">40</span>) <span class="sc">~</span> <span class="st">&quot;SECOND TREATMENT&quot;</span>,</span>
+<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a>      <span class="fu">is.na</span>(VISITNUM) <span class="sc">~</span> <span class="cn">NA_character_</span></span>
+<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a>    )</span>
+<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a>  )</span></code></pre></div>
 <table>
+<colgroup>
+<col width="9%" />
+<col width="9%" />
+<col width="17%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="17%" />
+<col width="6%" />
+<col width="17%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th align="left">USUBJID</th>
@@ -535,43 +572,57 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="adt" class="section level2">
 <h2>Derive ADT and ADY Variables</h2>
-<p>For <code>ADT</code> derivation, please follow your imputation rules. In the example below:</p>
+<p>For <code>ADT</code> derivation, please follow your imputation rules.
+In the example below:</p>
 <ul>
 <li><p>when day is missing then 15 is imputed;</p></li>
-<li><p>When both day and month are missing then 30-06 is imputed;</p></li>
+<li><p>When both day and month are missing then 30-06 is
+imputed;</p></li>
 <li><p>If input date is missing then no imputation is done;</p></li>
 </ul>
-<p>For <code>ADY</code> derivation <code>RFSTDTC</code> has been used in this template.</p>
+<p>For <code>ADY</code> derivation <code>RFSTDTC</code> has been used in
+this template.</p>
 <p>If your derivation is different, please adapt.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co"># ADT derivation</span></a>
-<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co"># Add also PPROTFL from ADSL (to avoid additional merges) in order to derive</span></a>
-<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co"># PPSRFL at step 11.</span></a>
-<a class="sourceLine" id="cb4-4" data-line-number="4">adis_adt &lt;-<span class="st"> </span><span class="kw">derive_vars_dt</span>(</a>
-<a class="sourceLine" id="cb4-5" data-line-number="5">  <span class="dt">dataset =</span> adis_atpt,</a>
-<a class="sourceLine" id="cb4-6" data-line-number="6">  <span class="dt">new_vars_prefix =</span> <span class="st">&quot;A&quot;</span>,</a>
-<a class="sourceLine" id="cb4-7" data-line-number="7">  <span class="dt">dtc =</span> ISDTC,</a>
-<a class="sourceLine" id="cb4-8" data-line-number="8">  <span class="dt">highest_imputation =</span> <span class="st">&quot;M&quot;</span>,</a>
-<a class="sourceLine" id="cb4-9" data-line-number="9">  <span class="dt">date_imputation =</span> <span class="st">&quot;mid&quot;</span>,</a>
-<a class="sourceLine" id="cb4-10" data-line-number="10">  <span class="dt">flag_imputation =</span> <span class="st">&quot;none&quot;</span></a>
-<a class="sourceLine" id="cb4-11" data-line-number="11">)</a>
-<a class="sourceLine" id="cb4-12" data-line-number="12"></a>
-<a class="sourceLine" id="cb4-13" data-line-number="13"><span class="co"># ADY derivation</span></a>
-<a class="sourceLine" id="cb4-14" data-line-number="14"><span class="co"># Attach RFSTDTC from ADSL in order to derive ADY</span></a>
-<a class="sourceLine" id="cb4-15" data-line-number="15">adis_ady &lt;-<span class="st"> </span>adis_adt <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-16" data-line-number="16"><span class="st">  </span><span class="kw">derive_vars_merged</span>(</a>
-<a class="sourceLine" id="cb4-17" data-line-number="17">    <span class="dt">dataset_add =</span> adsl,</a>
-<a class="sourceLine" id="cb4-18" data-line-number="18">    <span class="dt">new_vars =</span> <span class="kw">exprs</span>(RFSTDTC, PPROTFL),</a>
-<a class="sourceLine" id="cb4-19" data-line-number="19">    <span class="dt">by_vars =</span> <span class="kw">exprs</span>(STUDYID, USUBJID)</a>
-<a class="sourceLine" id="cb4-20" data-line-number="20">  ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-21" data-line-number="21"><span class="st">  </span><span class="kw">mutate</span>(</a>
-<a class="sourceLine" id="cb4-22" data-line-number="22">    <span class="dt">RFSTDT =</span> <span class="kw">as.Date</span>(RFSTDTC)</a>
-<a class="sourceLine" id="cb4-23" data-line-number="23">  ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-24" data-line-number="24"><span class="st">  </span><span class="kw">derive_vars_dy</span>(</a>
-<a class="sourceLine" id="cb4-25" data-line-number="25">    <span class="dt">reference_date =</span> RFSTDT,</a>
-<a class="sourceLine" id="cb4-26" data-line-number="26">    <span class="dt">source_vars =</span> <span class="kw">exprs</span>(ADT)</a>
-<a class="sourceLine" id="cb4-27" data-line-number="27">  ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-28" data-line-number="28"><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>RFSTDT)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># ADT derivation</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co"># Add also PPROTFL from ADSL (to avoid additional merges) in order to derive</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co"># PPSRFL at step 11.</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>adis_adt <span class="ot">&lt;-</span> <span class="fu">derive_vars_dt</span>(</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>  <span class="at">dataset =</span> adis_atpt,</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>  <span class="at">new_vars_prefix =</span> <span class="st">&quot;A&quot;</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>  <span class="at">dtc =</span> ISDTC,</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>  <span class="at">highest_imputation =</span> <span class="st">&quot;M&quot;</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>  <span class="at">date_imputation =</span> <span class="st">&quot;mid&quot;</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>  <span class="at">flag_imputation =</span> <span class="st">&quot;none&quot;</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>)</span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co"># ADY derivation</span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co"># Attach RFSTDTC from ADSL in order to derive ADY</span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>adis_ady <span class="ot">&lt;-</span> adis_adt <span class="sc">%&gt;%</span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a>  <span class="fu">derive_vars_merged</span>(</span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a>    <span class="at">dataset_add =</span> adsl,</span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a>    <span class="at">new_vars =</span> <span class="fu">exprs</span>(RFSTDTC, PPROTFL),</span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a>    <span class="at">by_vars =</span> <span class="fu">exprs</span>(STUDYID, USUBJID)</span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a>    <span class="at">RFSTDT =</span> <span class="fu">as.Date</span>(RFSTDTC)</span>
+<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a>  <span class="fu">derive_vars_dy</span>(</span>
+<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a>    <span class="at">reference_date =</span> RFSTDT,</span>
+<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a>    <span class="at">source_vars =</span> <span class="fu">exprs</span>(ADT)</span>
+<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>RFSTDT)</span></code></pre></div>
 <table>
+<colgroup>
+<col width="9%" />
+<col width="9%" />
+<col width="18%" />
+<col width="8%" />
+<col width="8%" />
+<col width="21%" />
+<col width="11%" />
+<col width="4%" />
+<col width="8%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th align="left">USUBJID</th>
@@ -701,72 +752,83 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="param" class="section level2">
 <h2>Parameters Derivation</h2>
-<p>In this template, duplicated records for <code>PARAMCD</code> have been created. In particular, you may find 4 different parameters values:</p>
+<p>In this template, duplicated records for <code>PARAMCD</code> have
+been created. In particular, you may find 4 different parameters
+values:</p>
 <ul>
 <li><p>Original values and relative log10 values;</p></li>
 <li><p>4fold values and relative log10 values;</p></li>
 </ul>
 <p>Please, add or remove datasets according to your study needs.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># Create record duplication in order to plot both original and LOG10 parameter values.</span></a>
-<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="co"># Add also records related to 4fold.</span></a>
-<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="co"># Please, keep or modify PARAM values according to your purposes.</span></a>
-<a class="sourceLine" id="cb5-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb5-5" data-line-number="5">is_log &lt;-<span class="st"> </span>adis_ady <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">DERIVED =</span> <span class="st">&quot;LOG10&quot;</span>)</a>
-<a class="sourceLine" id="cb5-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb5-8" data-line-number="8">is_4fold &lt;-<span class="st"> </span>adis_ady <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">DERIVED =</span> <span class="st">&quot;4FOLD&quot;</span>)</a>
-<a class="sourceLine" id="cb5-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb5-11" data-line-number="11">is_log_4fold &lt;-<span class="st"> </span>adis_ady <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb5-12" data-line-number="12"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">DERIVED =</span> <span class="st">&quot;LOG10 4FOLD&quot;</span>)</a>
-<a class="sourceLine" id="cb5-13" data-line-number="13"></a>
-<a class="sourceLine" id="cb5-14" data-line-number="14">adis_der &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(adis_ady, is_log, is_4fold, is_log_4fold) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb5-15" data-line-number="15"><span class="st">  </span><span class="kw">arrange</span>(STUDYID, USUBJID, VISITNUM, ISSEQ, <span class="op">!</span><span class="kw">is.na</span>(DERIVED)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb5-16" data-line-number="16"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">DERIVED =</span> <span class="kw">if_else</span>(<span class="kw">is.na</span>(DERIVED), <span class="st">&quot;ORIG&quot;</span>, DERIVED))</a>
-<a class="sourceLine" id="cb5-17" data-line-number="17"></a>
-<a class="sourceLine" id="cb5-18" data-line-number="18"></a>
-<a class="sourceLine" id="cb5-19" data-line-number="19">adis_paramcd &lt;-<span class="st"> </span>adis_der <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb5-20" data-line-number="20"><span class="st">  </span><span class="kw">mutate</span>(</a>
-<a class="sourceLine" id="cb5-21" data-line-number="21">    <span class="co"># PARAMCD: for log values, concatenation of L and ISTESTCD.</span></a>
-<a class="sourceLine" id="cb5-22" data-line-number="22">    <span class="dt">PARAMCD =</span> <span class="kw">case_when</span>(</a>
-<a class="sourceLine" id="cb5-23" data-line-number="23">      DERIVED <span class="op">==</span><span class="st"> &quot;ORIG&quot;</span> <span class="op">~</span><span class="st"> </span>ISTESTCD,</a>
-<a class="sourceLine" id="cb5-24" data-line-number="24">      DERIVED <span class="op">==</span><span class="st"> &quot;LOG10&quot;</span> <span class="op">~</span><span class="st"> </span><span class="kw">paste0</span>(ISTESTCD, <span class="st">&quot;L&quot;</span>),</a>
-<a class="sourceLine" id="cb5-25" data-line-number="25">      DERIVED <span class="op">==</span><span class="st"> &quot;4FOLD&quot;</span> <span class="op">~</span><span class="st"> </span><span class="kw">paste0</span>(ISTESTCD, <span class="st">&quot;F&quot;</span>),</a>
-<a class="sourceLine" id="cb5-26" data-line-number="26">      <span class="co"># As per CDISC rule, PARAMCD should be 8 charcaters long. Please, adapt if needed</span></a>
-<a class="sourceLine" id="cb5-27" data-line-number="27">      DERIVED <span class="op">==</span><span class="st"> &quot;LOG10 4FOLD&quot;</span> <span class="op">~</span><span class="st"> </span><span class="kw">paste0</span>(<span class="kw">substr</span>(ISTESTCD, <span class="dv">1</span>, <span class="dv">6</span>), <span class="st">&quot;LF&quot;</span>)</a>
-<a class="sourceLine" id="cb5-28" data-line-number="28">    )</a>
-<a class="sourceLine" id="cb5-29" data-line-number="29">  )</a>
-<a class="sourceLine" id="cb5-30" data-line-number="30"></a>
-<a class="sourceLine" id="cb5-31" data-line-number="31"></a>
-<a class="sourceLine" id="cb5-32" data-line-number="32"><span class="co"># Update param_lookup dataset with your PARAM values.</span></a>
-<a class="sourceLine" id="cb5-33" data-line-number="33">param_lookup &lt;-<span class="st"> </span><span class="kw">tribble</span>(</a>
-<a class="sourceLine" id="cb5-34" data-line-number="34">  <span class="op">~</span>PARAMCD, <span class="op">~</span>PARAM, <span class="op">~</span>PARAMN,</a>
-<a class="sourceLine" id="cb5-35" data-line-number="35">  <span class="st">&quot;J0033VN&quot;</span>, <span class="st">&quot;J0033VN Antibody&quot;</span>, <span class="dv">1</span>,</a>
-<a class="sourceLine" id="cb5-36" data-line-number="36">  <span class="st">&quot;I0019NT&quot;</span>, <span class="st">&quot;I0019NT Antibody&quot;</span>, <span class="dv">2</span>,</a>
-<a class="sourceLine" id="cb5-37" data-line-number="37">  <span class="st">&quot;M0019LN&quot;</span>, <span class="st">&quot;M0019LN Antibody&quot;</span>, <span class="dv">3</span>,</a>
-<a class="sourceLine" id="cb5-38" data-line-number="38">  <span class="st">&quot;R0003MA&quot;</span>, <span class="st">&quot;R0003MA Antibody&quot;</span>, <span class="dv">4</span>,</a>
-<a class="sourceLine" id="cb5-39" data-line-number="39">  <span class="st">&quot;J0033VNL&quot;</span>, <span class="st">&quot;LOG10 (J0033VN Antibody)&quot;</span>, <span class="dv">11</span>,</a>
-<a class="sourceLine" id="cb5-40" data-line-number="40">  <span class="st">&quot;I0019NTL&quot;</span>, <span class="st">&quot;LOG10 (I0019NT Antibody)&quot;</span>, <span class="dv">12</span>,</a>
-<a class="sourceLine" id="cb5-41" data-line-number="41">  <span class="st">&quot;M0019LNL&quot;</span>, <span class="st">&quot;LOG10 (M0019LN Antibody)&quot;</span>, <span class="dv">13</span>,</a>
-<a class="sourceLine" id="cb5-42" data-line-number="42">  <span class="st">&quot;R0003MAL&quot;</span>, <span class="st">&quot;LOG10 (R0003MA Antibody)&quot;</span>, <span class="dv">14</span>,</a>
-<a class="sourceLine" id="cb5-43" data-line-number="43">  <span class="st">&quot;J0033VNF&quot;</span>, <span class="st">&quot;4FOLD (J0033VN Antibody)&quot;</span>, <span class="dv">21</span>,</a>
-<a class="sourceLine" id="cb5-44" data-line-number="44">  <span class="st">&quot;I0019NTF&quot;</span>, <span class="st">&quot;4FOLD (I0019NT Antibody)&quot;</span>, <span class="dv">22</span>,</a>
-<a class="sourceLine" id="cb5-45" data-line-number="45">  <span class="st">&quot;M0019LNF&quot;</span>, <span class="st">&quot;4FOLD (M0019LN Antibody)&quot;</span>, <span class="dv">23</span>,</a>
-<a class="sourceLine" id="cb5-46" data-line-number="46">  <span class="st">&quot;R0003MAF&quot;</span>, <span class="st">&quot;4FOLD (R0003MA Antibody)&quot;</span>, <span class="dv">24</span>,</a>
-<a class="sourceLine" id="cb5-47" data-line-number="47">  <span class="st">&quot;J0033VLF&quot;</span>, <span class="st">&quot;LOG10 4FOLD (J0033VN Antibody)&quot;</span>, <span class="dv">31</span>,</a>
-<a class="sourceLine" id="cb5-48" data-line-number="48">  <span class="st">&quot;I0019NLF&quot;</span>, <span class="st">&quot;LOG10 4FOLD (I0019NT Antibody)&quot;</span>, <span class="dv">32</span>,</a>
-<a class="sourceLine" id="cb5-49" data-line-number="49">  <span class="st">&quot;M0019LLF&quot;</span>, <span class="st">&quot;LOG10 4FOLD (M0019LN Antibody)&quot;</span>, <span class="dv">33</span>,</a>
-<a class="sourceLine" id="cb5-50" data-line-number="50">  <span class="st">&quot;R0003MLF&quot;</span>, <span class="st">&quot;LOG10 4FOLD (R0003MA Antibody)&quot;</span>, <span class="dv">34</span></a>
-<a class="sourceLine" id="cb5-51" data-line-number="51">)</a>
-<a class="sourceLine" id="cb5-52" data-line-number="52"></a>
-<a class="sourceLine" id="cb5-53" data-line-number="53">adis_param_paramn &lt;-<span class="st"> </span><span class="kw">derive_vars_merged_lookup</span>(</a>
-<a class="sourceLine" id="cb5-54" data-line-number="54">  <span class="dt">dataset =</span> adis_paramcd,</a>
-<a class="sourceLine" id="cb5-55" data-line-number="55">  <span class="dt">dataset_add =</span> param_lookup,</a>
-<a class="sourceLine" id="cb5-56" data-line-number="56">  <span class="dt">new_vars =</span> <span class="kw">exprs</span>(PARAM, PARAMN),</a>
-<a class="sourceLine" id="cb5-57" data-line-number="57">  <span class="dt">by_vars =</span> <span class="kw">exprs</span>(PARAMCD)</a>
-<a class="sourceLine" id="cb5-58" data-line-number="58">)</a>
-<a class="sourceLine" id="cb5-59" data-line-number="59"><span class="co">#&gt; All `PARAMCD` are mapped.</span></a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Create record duplication in order to plot both original and LOG10 parameter values.</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co"># Add also records related to 4fold.</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co"># Please, keep or modify PARAM values according to your purposes.</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>is_log <span class="ot">&lt;-</span> adis_ady <span class="sc">%&gt;%</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">DERIVED =</span> <span class="st">&quot;LOG10&quot;</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>is_4fold <span class="ot">&lt;-</span> adis_ady <span class="sc">%&gt;%</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">DERIVED =</span> <span class="st">&quot;4FOLD&quot;</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>is_log_4fold <span class="ot">&lt;-</span> adis_ady <span class="sc">%&gt;%</span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">DERIVED =</span> <span class="st">&quot;LOG10 4FOLD&quot;</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>adis_der <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(adis_ady, is_log, is_4fold, is_log_4fold) <span class="sc">%&gt;%</span></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a>  <span class="fu">arrange</span>(STUDYID, USUBJID, VISITNUM, ISSEQ, <span class="sc">!</span><span class="fu">is.na</span>(DERIVED)) <span class="sc">%&gt;%</span></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">DERIVED =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(DERIVED), <span class="st">&quot;ORIG&quot;</span>, DERIVED))</span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a>adis_paramcd <span class="ot">&lt;-</span> adis_der <span class="sc">%&gt;%</span></span>
+<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a>    <span class="co"># PARAMCD: for log values, concatenation of L and ISTESTCD.</span></span>
+<span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a>    <span class="at">PARAMCD =</span> <span class="fu">case_when</span>(</span>
+<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a>      DERIVED <span class="sc">==</span> <span class="st">&quot;ORIG&quot;</span> <span class="sc">~</span> ISTESTCD,</span>
+<span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a>      DERIVED <span class="sc">==</span> <span class="st">&quot;LOG10&quot;</span> <span class="sc">~</span> <span class="fu">paste0</span>(ISTESTCD, <span class="st">&quot;L&quot;</span>),</span>
+<span id="cb5-25"><a href="#cb5-25" tabindex="-1"></a>      DERIVED <span class="sc">==</span> <span class="st">&quot;4FOLD&quot;</span> <span class="sc">~</span> <span class="fu">paste0</span>(ISTESTCD, <span class="st">&quot;F&quot;</span>),</span>
+<span id="cb5-26"><a href="#cb5-26" tabindex="-1"></a>      <span class="co"># As per CDISC rule, PARAMCD should be 8 charcaters long. Please, adapt if needed</span></span>
+<span id="cb5-27"><a href="#cb5-27" tabindex="-1"></a>      DERIVED <span class="sc">==</span> <span class="st">&quot;LOG10 4FOLD&quot;</span> <span class="sc">~</span> <span class="fu">paste0</span>(<span class="fu">substr</span>(ISTESTCD, <span class="dv">1</span>, <span class="dv">6</span>), <span class="st">&quot;LF&quot;</span>)</span>
+<span id="cb5-28"><a href="#cb5-28" tabindex="-1"></a>    )</span>
+<span id="cb5-29"><a href="#cb5-29" tabindex="-1"></a>  )</span>
+<span id="cb5-30"><a href="#cb5-30" tabindex="-1"></a></span>
+<span id="cb5-31"><a href="#cb5-31" tabindex="-1"></a></span>
+<span id="cb5-32"><a href="#cb5-32" tabindex="-1"></a><span class="co"># Update param_lookup dataset with your PARAM values.</span></span>
+<span id="cb5-33"><a href="#cb5-33" tabindex="-1"></a>param_lookup <span class="ot">&lt;-</span> <span class="fu">tribble</span>(</span>
+<span id="cb5-34"><a href="#cb5-34" tabindex="-1"></a>  <span class="sc">~</span>PARAMCD, <span class="sc">~</span>PARAM, <span class="sc">~</span>PARAMN,</span>
+<span id="cb5-35"><a href="#cb5-35" tabindex="-1"></a>  <span class="st">&quot;J0033VN&quot;</span>, <span class="st">&quot;J0033VN Antibody&quot;</span>, <span class="dv">1</span>,</span>
+<span id="cb5-36"><a href="#cb5-36" tabindex="-1"></a>  <span class="st">&quot;I0019NT&quot;</span>, <span class="st">&quot;I0019NT Antibody&quot;</span>, <span class="dv">2</span>,</span>
+<span id="cb5-37"><a href="#cb5-37" tabindex="-1"></a>  <span class="st">&quot;M0019LN&quot;</span>, <span class="st">&quot;M0019LN Antibody&quot;</span>, <span class="dv">3</span>,</span>
+<span id="cb5-38"><a href="#cb5-38" tabindex="-1"></a>  <span class="st">&quot;R0003MA&quot;</span>, <span class="st">&quot;R0003MA Antibody&quot;</span>, <span class="dv">4</span>,</span>
+<span id="cb5-39"><a href="#cb5-39" tabindex="-1"></a>  <span class="st">&quot;J0033VNL&quot;</span>, <span class="st">&quot;LOG10 (J0033VN Antibody)&quot;</span>, <span class="dv">11</span>,</span>
+<span id="cb5-40"><a href="#cb5-40" tabindex="-1"></a>  <span class="st">&quot;I0019NTL&quot;</span>, <span class="st">&quot;LOG10 (I0019NT Antibody)&quot;</span>, <span class="dv">12</span>,</span>
+<span id="cb5-41"><a href="#cb5-41" tabindex="-1"></a>  <span class="st">&quot;M0019LNL&quot;</span>, <span class="st">&quot;LOG10 (M0019LN Antibody)&quot;</span>, <span class="dv">13</span>,</span>
+<span id="cb5-42"><a href="#cb5-42" tabindex="-1"></a>  <span class="st">&quot;R0003MAL&quot;</span>, <span class="st">&quot;LOG10 (R0003MA Antibody)&quot;</span>, <span class="dv">14</span>,</span>
+<span id="cb5-43"><a href="#cb5-43" tabindex="-1"></a>  <span class="st">&quot;J0033VNF&quot;</span>, <span class="st">&quot;4FOLD (J0033VN Antibody)&quot;</span>, <span class="dv">21</span>,</span>
+<span id="cb5-44"><a href="#cb5-44" tabindex="-1"></a>  <span class="st">&quot;I0019NTF&quot;</span>, <span class="st">&quot;4FOLD (I0019NT Antibody)&quot;</span>, <span class="dv">22</span>,</span>
+<span id="cb5-45"><a href="#cb5-45" tabindex="-1"></a>  <span class="st">&quot;M0019LNF&quot;</span>, <span class="st">&quot;4FOLD (M0019LN Antibody)&quot;</span>, <span class="dv">23</span>,</span>
+<span id="cb5-46"><a href="#cb5-46" tabindex="-1"></a>  <span class="st">&quot;R0003MAF&quot;</span>, <span class="st">&quot;4FOLD (R0003MA Antibody)&quot;</span>, <span class="dv">24</span>,</span>
+<span id="cb5-47"><a href="#cb5-47" tabindex="-1"></a>  <span class="st">&quot;J0033VLF&quot;</span>, <span class="st">&quot;LOG10 4FOLD (J0033VN Antibody)&quot;</span>, <span class="dv">31</span>,</span>
+<span id="cb5-48"><a href="#cb5-48" tabindex="-1"></a>  <span class="st">&quot;I0019NLF&quot;</span>, <span class="st">&quot;LOG10 4FOLD (I0019NT Antibody)&quot;</span>, <span class="dv">32</span>,</span>
+<span id="cb5-49"><a href="#cb5-49" tabindex="-1"></a>  <span class="st">&quot;M0019LLF&quot;</span>, <span class="st">&quot;LOG10 4FOLD (M0019LN Antibody)&quot;</span>, <span class="dv">33</span>,</span>
+<span id="cb5-50"><a href="#cb5-50" tabindex="-1"></a>  <span class="st">&quot;R0003MLF&quot;</span>, <span class="st">&quot;LOG10 4FOLD (R0003MA Antibody)&quot;</span>, <span class="dv">34</span></span>
+<span id="cb5-51"><a href="#cb5-51" tabindex="-1"></a>)</span>
+<span id="cb5-52"><a href="#cb5-52" tabindex="-1"></a></span>
+<span id="cb5-53"><a href="#cb5-53" tabindex="-1"></a>adis_param_paramn <span class="ot">&lt;-</span> <span class="fu">derive_vars_merged_lookup</span>(</span>
+<span id="cb5-54"><a href="#cb5-54" tabindex="-1"></a>  <span class="at">dataset =</span> adis_paramcd,</span>
+<span id="cb5-55"><a href="#cb5-55" tabindex="-1"></a>  <span class="at">dataset_add =</span> param_lookup,</span>
+<span id="cb5-56"><a href="#cb5-56" tabindex="-1"></a>  <span class="at">new_vars =</span> <span class="fu">exprs</span>(PARAM, PARAMN),</span>
+<span id="cb5-57"><a href="#cb5-57" tabindex="-1"></a>  <span class="at">by_vars =</span> <span class="fu">exprs</span>(PARAMCD)</span>
+<span id="cb5-58"><a href="#cb5-58" tabindex="-1"></a>)</span>
+<span id="cb5-59"><a href="#cb5-59" tabindex="-1"></a><span class="co">#&gt; All `PARAMCD` are mapped.</span></span></code></pre></div>
 <table>
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="18%" />
+<col width="8%" />
+<col width="10%" />
+<col width="34%" />
+<col width="7%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th align="left">USUBJID</th>
@@ -875,15 +937,25 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div id="parcat" class="section level2">
 <h2>Derive PARCAT1 and CUTOFFx Variables</h2>
 <p>Derive <code>PARCAT1</code> and <code>CUTOFF</code>x variables.</p>
-<p>Fake values has been put for <code>CUTOFF</code> values. Please, adapt base on your objectives.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">adis_parcat1_cutoff &lt;-<span class="st"> </span>adis_param_paramn <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(</a>
-<a class="sourceLine" id="cb6-3" data-line-number="3">    <span class="dt">PARCAT1 =</span> ISCAT,</a>
-<a class="sourceLine" id="cb6-4" data-line-number="4">    <span class="co"># Please, define your additional cutoff values. Delete if not needed.</span></a>
-<a class="sourceLine" id="cb6-5" data-line-number="5">    <span class="dt">CUTOFF02 =</span> <span class="dv">4</span>,</a>
-<a class="sourceLine" id="cb6-6" data-line-number="6">    <span class="dt">CUTOFF03 =</span> <span class="dv">8</span></a>
-<a class="sourceLine" id="cb6-7" data-line-number="7">  )</a></code></pre></div>
+<p>Fake values has been put for <code>CUTOFF</code> values. Please,
+adapt base on your objectives.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>adis_parcat1_cutoff <span class="ot">&lt;-</span> adis_param_paramn <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>    <span class="at">PARCAT1 =</span> ISCAT,</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>    <span class="co"># Please, define your additional cutoff values. Delete if not needed.</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>    <span class="at">CUTOFF02 =</span> <span class="dv">4</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>    <span class="at">CUTOFF03 =</span> <span class="dv">8</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>  )</span></code></pre></div>
 <table>
+<colgroup>
+<col width="12%" />
+<col width="12%" />
+<col width="23%" />
+<col width="11%" />
+<col width="15%" />
+<col width="12%" />
+<col width="12%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th align="left">USUBJID</th>
@@ -992,108 +1064,136 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div id="aval" class="section level2">
 <h2>Derive AVAL, AVALU and DTYPE Variables</h2>
 <p>This is the core of ADIS template.</p>
-<p>For ORIGINAL (and relative log10 values) the following rule has been followed for <code>AVAL</code> derivation:</p>
+<p>For ORIGINAL (and relative log10 values) the following rule has been
+followed for <code>AVAL</code> derivation:</p>
 <ul>
-<li><p>When the lab result (<code>ISSTRESN</code>) is below the Lower Limit Of Quantitation, then set <code>ISSTRESN/2</code>;</p></li>
-<li><p>When the lab result (<code>ISSTRESN</code>) falls in the Lower Limit Of Quantitation and Upper Limit Of Quantitation range, then set <code>ISSTRESN</code>. If Upper Limit Of Quantitation is not present (not mapped into SDTM), then AVAL is equals to <code>ISSTRESN</code> when it is greater than Lower Limit Of Quantitation;</p></li>
-<li><p>When the lab result (<code>ISSTRESN</code>) is greater then the Upper Limit Of Quantitation, then set to <code>ISSTRESN</code>. Upper_rule is an optional argument. If Upper Limit Of Quantitation is not present, you can remove it;</p></li>
+<li><p>When the lab result (<code>ISSTRESN</code>) is below the Lower
+Limit Of Quantitation, then set <code>ISSTRESN/2</code>;</p></li>
+<li><p>When the lab result (<code>ISSTRESN</code>) falls in the Lower
+Limit Of Quantitation and Upper Limit Of Quantitation range, then set
+<code>ISSTRESN</code>. If Upper Limit Of Quantitation is not present
+(not mapped into SDTM), then AVAL is equals to <code>ISSTRESN</code>
+when it is greater than Lower Limit Of Quantitation;</p></li>
+<li><p>When the lab result (<code>ISSTRESN</code>) is greater then the
+Upper Limit Of Quantitation, then set to <code>ISSTRESN</code>.
+Upper_rule is an optional argument. If Upper Limit Of Quantitation is
+not present, you can remove it;</p></li>
 </ul>
-<p>For 4fold (and relative log10 values) the rule is pretty the same, except when the LAB result (<code>ISSTRESN</code>) is lower than the Lower Limit Of Quantitation. In that case put <code>ISSTRESN</code> instead of <code>ISSTRESN/2</code>.</p>
-<p>With log10 transformations, simply follow the before rules and apply log10 function.</p>
+<p>For 4fold (and relative log10 values) the rule is pretty the same,
+except when the LAB result (<code>ISSTRESN</code>) is lower than the
+Lower Limit Of Quantitation. In that case put <code>ISSTRESN</code>
+instead of <code>ISSTRESN/2</code>.</p>
+<p>With log10 transformations, simply follow the before rules and apply
+log10 function.</p>
 <p>Please, update this algorithm according to your Protocol/SAP.</p>
 <p><code>AVALU</code> is set equal to <code>IS.ISSTRESU</code>.</p>
-<p>Later you can find <code>SERCAT1/N</code> and <code>DTYPE</code> derivations.</p>
-<p><code>DTYPE</code> is filled only for those records who exceed or are below the <code>ISULOQ</code> and <code>ISSLOQ</code>, respectively. If <code>ISULOQ</code> is not present, <code>DTYPE</code> is filled only when lab result is below Lower Limit of Quantitation.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">adis_or &lt;-<span class="st"> </span>adis_parcat1_cutoff <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(DERIVED <span class="op">==</span><span class="st"> &quot;ORIG&quot;</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="st">  </span><span class="kw">derive_var_aval_adis</span>(</a>
-<a class="sourceLine" id="cb7-4" data-line-number="4">    <span class="dt">lower_rule =</span> ISLLOQ <span class="op">/</span><span class="st"> </span><span class="dv">2</span>,</a>
-<a class="sourceLine" id="cb7-5" data-line-number="5">    <span class="dt">middle_rule =</span> ISSTRESN,</a>
-<a class="sourceLine" id="cb7-6" data-line-number="6">    <span class="dt">upper_rule =</span> ISULOQ,</a>
-<a class="sourceLine" id="cb7-7" data-line-number="7">    <span class="dt">round =</span> <span class="dv">2</span></a>
-<a class="sourceLine" id="cb7-8" data-line-number="8">  )</a>
-<a class="sourceLine" id="cb7-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb7-10" data-line-number="10">adis_log_or &lt;-<span class="st"> </span>adis_parcat1_cutoff <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="st">  </span><span class="kw">filter</span>(DERIVED <span class="op">==</span><span class="st"> &quot;LOG10&quot;</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="st">  </span><span class="kw">derive_var_aval_adis</span>(</a>
-<a class="sourceLine" id="cb7-13" data-line-number="13">    <span class="dt">lower_rule =</span> <span class="kw">log10</span>(ISLLOQ <span class="op">/</span><span class="st"> </span><span class="dv">2</span>),</a>
-<a class="sourceLine" id="cb7-14" data-line-number="14">    <span class="dt">middle_rule =</span> <span class="kw">log10</span>(ISSTRESN),</a>
-<a class="sourceLine" id="cb7-15" data-line-number="15">    <span class="dt">upper_rule =</span> <span class="kw">log10</span>(ISULOQ),</a>
-<a class="sourceLine" id="cb7-16" data-line-number="16">    <span class="dt">round =</span> <span class="dv">2</span></a>
-<a class="sourceLine" id="cb7-17" data-line-number="17">  )</a>
-<a class="sourceLine" id="cb7-18" data-line-number="18"></a>
-<a class="sourceLine" id="cb7-19" data-line-number="19">adis_4fold &lt;-<span class="st"> </span>adis_parcat1_cutoff <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-20" data-line-number="20"><span class="st">  </span><span class="kw">filter</span>(DERIVED <span class="op">==</span><span class="st"> &quot;4FOLD&quot;</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-21" data-line-number="21"><span class="st">  </span><span class="kw">derive_var_aval_adis</span>(</a>
-<a class="sourceLine" id="cb7-22" data-line-number="22">    <span class="dt">lower_rule =</span> ISLLOQ,</a>
-<a class="sourceLine" id="cb7-23" data-line-number="23">    <span class="dt">middle_rule =</span> ISSTRESN,</a>
-<a class="sourceLine" id="cb7-24" data-line-number="24">    <span class="dt">upper_rule =</span> ISULOQ,</a>
-<a class="sourceLine" id="cb7-25" data-line-number="25">    <span class="dt">round =</span> <span class="dv">2</span></a>
-<a class="sourceLine" id="cb7-26" data-line-number="26">  )</a>
-<a class="sourceLine" id="cb7-27" data-line-number="27"></a>
-<a class="sourceLine" id="cb7-28" data-line-number="28">adis_log_4fold &lt;-<span class="st"> </span>adis_parcat1_cutoff <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-29" data-line-number="29"><span class="st">  </span><span class="kw">filter</span>(DERIVED <span class="op">==</span><span class="st"> &quot;LOG10 4FOLD&quot;</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-30" data-line-number="30"><span class="st">  </span><span class="kw">derive_var_aval_adis</span>(</a>
-<a class="sourceLine" id="cb7-31" data-line-number="31">    <span class="dt">lower_rule =</span> <span class="kw">log10</span>(ISLLOQ),</a>
-<a class="sourceLine" id="cb7-32" data-line-number="32">    <span class="dt">middle_rule =</span> <span class="kw">log10</span>(ISSTRESN),</a>
-<a class="sourceLine" id="cb7-33" data-line-number="33">    <span class="dt">upper_rule =</span> <span class="kw">log10</span>(ISULOQ),</a>
-<a class="sourceLine" id="cb7-34" data-line-number="34">    <span class="dt">round =</span> <span class="dv">2</span></a>
-<a class="sourceLine" id="cb7-35" data-line-number="35">  )</a>
-<a class="sourceLine" id="cb7-36" data-line-number="36"></a>
-<a class="sourceLine" id="cb7-37" data-line-number="37">adis_aval_sercat1 &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(adis_or, adis_log_or, adis_4fold, adis_log_4fold) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-38" data-line-number="38"><span class="st">  </span><span class="kw">mutate</span>( <span class="co"># AVALU derivation (please delete if not needed for your study)</span></a>
-<a class="sourceLine" id="cb7-39" data-line-number="39">    <span class="dt">AVALU =</span> ISSTRESU,</a>
-<a class="sourceLine" id="cb7-40" data-line-number="40"></a>
-<a class="sourceLine" id="cb7-41" data-line-number="41">    <span class="co"># SERCAT1 derivation</span></a>
-<a class="sourceLine" id="cb7-42" data-line-number="42">    <span class="dt">SERCAT1 =</span> <span class="kw">case_when</span>(</a>
-<a class="sourceLine" id="cb7-43" data-line-number="43">      ISBLFL <span class="op">==</span><span class="st"> &quot;Y&quot;</span> <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span><span class="kw">is.na</span>(AVAL) <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span><span class="kw">is.na</span>(ISLLOQ) <span class="op">&amp;</span><span class="st"> </span>AVAL <span class="op">&lt;</span><span class="st"> </span>ISLLOQ <span class="op">~</span><span class="st"> &quot;S-&quot;</span>,</a>
-<a class="sourceLine" id="cb7-44" data-line-number="44">      ISBLFL <span class="op">==</span><span class="st"> &quot;Y&quot;</span> <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span><span class="kw">is.na</span>(AVAL) <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span><span class="kw">is.na</span>(ISLLOQ) <span class="op">&amp;</span><span class="st"> </span>AVAL <span class="op">&gt;=</span><span class="st"> </span>ISLLOQ <span class="op">~</span><span class="st"> &quot;S+&quot;</span>,</a>
-<a class="sourceLine" id="cb7-45" data-line-number="45">      ISBLFL <span class="op">==</span><span class="st"> &quot;Y&quot;</span> <span class="op">&amp;</span><span class="st"> </span>(<span class="kw">is.na</span>(AVAL) <span class="op">|</span><span class="st"> </span><span class="kw">is.na</span>(ISLLOQ)) <span class="op">~</span><span class="st"> &quot;UNKNOWN&quot;</span></a>
-<a class="sourceLine" id="cb7-46" data-line-number="46">    )</a>
-<a class="sourceLine" id="cb7-47" data-line-number="47">  )</a>
-<a class="sourceLine" id="cb7-48" data-line-number="48"></a>
-<a class="sourceLine" id="cb7-49" data-line-number="49"></a>
-<a class="sourceLine" id="cb7-50" data-line-number="50"><span class="co"># Update param_lookup2 dataset with your SERCAT1N values.</span></a>
-<a class="sourceLine" id="cb7-51" data-line-number="51">param_lookup2 &lt;-<span class="st"> </span><span class="kw">tribble</span>(</a>
-<a class="sourceLine" id="cb7-52" data-line-number="52">  <span class="op">~</span>SERCAT1, <span class="op">~</span>SERCAT1N,</a>
-<a class="sourceLine" id="cb7-53" data-line-number="53">  <span class="st">&quot;S-&quot;</span>, <span class="dv">1</span>,</a>
-<a class="sourceLine" id="cb7-54" data-line-number="54">  <span class="st">&quot;S+&quot;</span>, <span class="dv">2</span>,</a>
-<a class="sourceLine" id="cb7-55" data-line-number="55">  <span class="st">&quot;UNKNOWN&quot;</span>, <span class="dv">3</span>,</a>
-<a class="sourceLine" id="cb7-56" data-line-number="56">  <span class="ot">NA_character_</span>, <span class="ot">NA_real_</span></a>
-<a class="sourceLine" id="cb7-57" data-line-number="57">)</a>
-<a class="sourceLine" id="cb7-58" data-line-number="58"></a>
-<a class="sourceLine" id="cb7-59" data-line-number="59">adis_sercat1n &lt;-<span class="st"> </span><span class="kw">derive_vars_merged_lookup</span>(</a>
-<a class="sourceLine" id="cb7-60" data-line-number="60">  <span class="dt">dataset =</span> adis_aval_sercat1,</a>
-<a class="sourceLine" id="cb7-61" data-line-number="61">  <span class="dt">dataset_add =</span> param_lookup2,</a>
-<a class="sourceLine" id="cb7-62" data-line-number="62">  <span class="dt">new_vars =</span> <span class="kw">exprs</span>(SERCAT1N),</a>
-<a class="sourceLine" id="cb7-63" data-line-number="63">  <span class="dt">by_vars =</span> <span class="kw">exprs</span>(SERCAT1)</a>
-<a class="sourceLine" id="cb7-64" data-line-number="64">)</a>
-<a class="sourceLine" id="cb7-65" data-line-number="65"><span class="co">#&gt; All `SERCAT1` are mapped.</span></a>
-<a class="sourceLine" id="cb7-66" data-line-number="66"></a>
-<a class="sourceLine" id="cb7-67" data-line-number="67"></a>
-<a class="sourceLine" id="cb7-68" data-line-number="68"><span class="co"># DTYPE derivation.</span></a>
-<a class="sourceLine" id="cb7-69" data-line-number="69"><span class="co"># Please update code when &lt;,&lt;=,&gt;,&gt;= are present in your lab results (in ISSTRESC)</span></a>
-<a class="sourceLine" id="cb7-70" data-line-number="70"></a>
-<a class="sourceLine" id="cb7-71" data-line-number="71"><span class="cf">if</span> (<span class="kw">any</span>(<span class="kw">names</span>(adis_sercat1n) <span class="op">==</span><span class="st"> &quot;ISULOQ&quot;</span>) <span class="op">==</span><span class="st"> </span><span class="ot">TRUE</span>) {</a>
-<a class="sourceLine" id="cb7-72" data-line-number="72">  adis_dtype &lt;-<span class="st"> </span>adis_sercat1n <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-73" data-line-number="73"><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">DTYPE =</span> <span class="kw">case_when</span>(</a>
-<a class="sourceLine" id="cb7-74" data-line-number="74">      DERIVED <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;ORIG&quot;</span>, <span class="st">&quot;LOG10&quot;</span>) <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span><span class="kw">is.na</span>(ISLLOQ) <span class="op">&amp;</span></a>
-<a class="sourceLine" id="cb7-75" data-line-number="75"><span class="st">        </span>((ISSTRESN <span class="op">&lt;</span><span class="st"> </span>ISLLOQ) <span class="op">|</span><span class="st"> </span><span class="kw">grepl</span>(<span class="st">&quot;&lt;&quot;</span>, ISORRES)) <span class="op">~</span><span class="st"> &quot;HALFLLOQ&quot;</span>,</a>
-<a class="sourceLine" id="cb7-76" data-line-number="76">      DERIVED <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;ORIG&quot;</span>, <span class="st">&quot;LOG10&quot;</span>) <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span><span class="kw">is.na</span>(ISULOQ) <span class="op">&amp;</span></a>
-<a class="sourceLine" id="cb7-77" data-line-number="77"><span class="st">        </span>((ISSTRESN <span class="op">&gt;</span><span class="st"> </span>ISULOQ) <span class="op">|</span><span class="st"> </span><span class="kw">grepl</span>(<span class="st">&quot;&gt;&quot;</span>, ISORRES)) <span class="op">~</span><span class="st"> &quot;ULOQ&quot;</span>,</a>
-<a class="sourceLine" id="cb7-78" data-line-number="78">      <span class="ot">TRUE</span> <span class="op">~</span><span class="st"> </span><span class="ot">NA_character_</span></a>
-<a class="sourceLine" id="cb7-79" data-line-number="79">    ))</a>
-<a class="sourceLine" id="cb7-80" data-line-number="80">}</a>
-<a class="sourceLine" id="cb7-81" data-line-number="81"></a>
-<a class="sourceLine" id="cb7-82" data-line-number="82"><span class="cf">if</span> (<span class="kw">any</span>(<span class="kw">names</span>(adis_sercat1n) <span class="op">==</span><span class="st"> &quot;ISULOQ&quot;</span>) <span class="op">==</span><span class="st"> </span><span class="ot">FALSE</span>) {</a>
-<a class="sourceLine" id="cb7-83" data-line-number="83">  adis_dtype &lt;-<span class="st"> </span>adis_sercat1n <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-84" data-line-number="84"><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">DTYPE =</span> <span class="kw">case_when</span>(</a>
-<a class="sourceLine" id="cb7-85" data-line-number="85">      DERIVED <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;ORIG&quot;</span>, <span class="st">&quot;LOG10&quot;</span>) <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span><span class="kw">is.na</span>(ISLLOQ) <span class="op">&amp;</span></a>
-<a class="sourceLine" id="cb7-86" data-line-number="86"><span class="st">        </span>((ISSTRESN <span class="op">&lt;</span><span class="st"> </span>ISLLOQ) <span class="op">|</span><span class="st"> </span><span class="kw">grepl</span>(<span class="st">&quot;&lt;&quot;</span>, ISORRES)) <span class="op">~</span><span class="st"> &quot;HALFLLOQ&quot;</span>,</a>
-<a class="sourceLine" id="cb7-87" data-line-number="87">      <span class="ot">TRUE</span> <span class="op">~</span><span class="st"> </span><span class="ot">NA_character_</span></a>
-<a class="sourceLine" id="cb7-88" data-line-number="88">    ))</a>
-<a class="sourceLine" id="cb7-89" data-line-number="89">}</a></code></pre></div>
+<p>Later you can find <code>SERCAT1/N</code> and <code>DTYPE</code>
+derivations.</p>
+<p><code>DTYPE</code> is filled only for those records who exceed or are
+below the <code>ISULOQ</code> and <code>ISSLOQ</code>, respectively. If
+<code>ISULOQ</code> is not present, <code>DTYPE</code> is filled only
+when lab result is below Lower Limit of Quantitation.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>adis_or <span class="ot">&lt;-</span> adis_parcat1_cutoff <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">filter</span>(DERIVED <span class="sc">==</span> <span class="st">&quot;ORIG&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="fu">derive_var_aval_adis</span>(</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    <span class="at">lower_rule =</span> ISLLOQ <span class="sc">/</span> <span class="dv">2</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>    <span class="at">middle_rule =</span> ISSTRESN,</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>    <span class="at">upper_rule =</span> ISULOQ,</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>    <span class="at">round =</span> <span class="dv">2</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>  )</span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>adis_log_or <span class="ot">&lt;-</span> adis_parcat1_cutoff <span class="sc">%&gt;%</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>  <span class="fu">filter</span>(DERIVED <span class="sc">==</span> <span class="st">&quot;LOG10&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>  <span class="fu">derive_var_aval_adis</span>(</span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a>    <span class="at">lower_rule =</span> <span class="fu">log10</span>(ISLLOQ <span class="sc">/</span> <span class="dv">2</span>),</span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>    <span class="at">middle_rule =</span> <span class="fu">log10</span>(ISSTRESN),</span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a>    <span class="at">upper_rule =</span> <span class="fu">log10</span>(ISULOQ),</span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a>    <span class="at">round =</span> <span class="dv">2</span></span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a>  )</span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a></span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a>adis_4fold <span class="ot">&lt;-</span> adis_parcat1_cutoff <span class="sc">%&gt;%</span></span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a>  <span class="fu">filter</span>(DERIVED <span class="sc">==</span> <span class="st">&quot;4FOLD&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a>  <span class="fu">derive_var_aval_adis</span>(</span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a>    <span class="at">lower_rule =</span> ISLLOQ,</span>
+<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a>    <span class="at">middle_rule =</span> ISSTRESN,</span>
+<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a>    <span class="at">upper_rule =</span> ISULOQ,</span>
+<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a>    <span class="at">round =</span> <span class="dv">2</span></span>
+<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a>  )</span>
+<span id="cb7-27"><a href="#cb7-27" tabindex="-1"></a></span>
+<span id="cb7-28"><a href="#cb7-28" tabindex="-1"></a>adis_log_4fold <span class="ot">&lt;-</span> adis_parcat1_cutoff <span class="sc">%&gt;%</span></span>
+<span id="cb7-29"><a href="#cb7-29" tabindex="-1"></a>  <span class="fu">filter</span>(DERIVED <span class="sc">==</span> <span class="st">&quot;LOG10 4FOLD&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-30"><a href="#cb7-30" tabindex="-1"></a>  <span class="fu">derive_var_aval_adis</span>(</span>
+<span id="cb7-31"><a href="#cb7-31" tabindex="-1"></a>    <span class="at">lower_rule =</span> <span class="fu">log10</span>(ISLLOQ),</span>
+<span id="cb7-32"><a href="#cb7-32" tabindex="-1"></a>    <span class="at">middle_rule =</span> <span class="fu">log10</span>(ISSTRESN),</span>
+<span id="cb7-33"><a href="#cb7-33" tabindex="-1"></a>    <span class="at">upper_rule =</span> <span class="fu">log10</span>(ISULOQ),</span>
+<span id="cb7-34"><a href="#cb7-34" tabindex="-1"></a>    <span class="at">round =</span> <span class="dv">2</span></span>
+<span id="cb7-35"><a href="#cb7-35" tabindex="-1"></a>  )</span>
+<span id="cb7-36"><a href="#cb7-36" tabindex="-1"></a></span>
+<span id="cb7-37"><a href="#cb7-37" tabindex="-1"></a>adis_aval_sercat1 <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(adis_or, adis_log_or, adis_4fold, adis_log_4fold) <span class="sc">%&gt;%</span></span>
+<span id="cb7-38"><a href="#cb7-38" tabindex="-1"></a>  <span class="fu">mutate</span>( <span class="co"># AVALU derivation (please delete if not needed for your study)</span></span>
+<span id="cb7-39"><a href="#cb7-39" tabindex="-1"></a>    <span class="at">AVALU =</span> ISSTRESU,</span>
+<span id="cb7-40"><a href="#cb7-40" tabindex="-1"></a></span>
+<span id="cb7-41"><a href="#cb7-41" tabindex="-1"></a>    <span class="co"># SERCAT1 derivation</span></span>
+<span id="cb7-42"><a href="#cb7-42" tabindex="-1"></a>    <span class="at">SERCAT1 =</span> <span class="fu">case_when</span>(</span>
+<span id="cb7-43"><a href="#cb7-43" tabindex="-1"></a>      ISBLFL <span class="sc">==</span> <span class="st">&quot;Y&quot;</span> <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(AVAL) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(ISLLOQ) <span class="sc">&amp;</span> AVAL <span class="sc">&lt;</span> ISLLOQ <span class="sc">~</span> <span class="st">&quot;S-&quot;</span>,</span>
+<span id="cb7-44"><a href="#cb7-44" tabindex="-1"></a>      ISBLFL <span class="sc">==</span> <span class="st">&quot;Y&quot;</span> <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(AVAL) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(ISLLOQ) <span class="sc">&amp;</span> AVAL <span class="sc">&gt;=</span> ISLLOQ <span class="sc">~</span> <span class="st">&quot;S+&quot;</span>,</span>
+<span id="cb7-45"><a href="#cb7-45" tabindex="-1"></a>      ISBLFL <span class="sc">==</span> <span class="st">&quot;Y&quot;</span> <span class="sc">&amp;</span> (<span class="fu">is.na</span>(AVAL) <span class="sc">|</span> <span class="fu">is.na</span>(ISLLOQ)) <span class="sc">~</span> <span class="st">&quot;UNKNOWN&quot;</span></span>
+<span id="cb7-46"><a href="#cb7-46" tabindex="-1"></a>    )</span>
+<span id="cb7-47"><a href="#cb7-47" tabindex="-1"></a>  )</span>
+<span id="cb7-48"><a href="#cb7-48" tabindex="-1"></a></span>
+<span id="cb7-49"><a href="#cb7-49" tabindex="-1"></a></span>
+<span id="cb7-50"><a href="#cb7-50" tabindex="-1"></a><span class="co"># Update param_lookup2 dataset with your SERCAT1N values.</span></span>
+<span id="cb7-51"><a href="#cb7-51" tabindex="-1"></a>param_lookup2 <span class="ot">&lt;-</span> <span class="fu">tribble</span>(</span>
+<span id="cb7-52"><a href="#cb7-52" tabindex="-1"></a>  <span class="sc">~</span>SERCAT1, <span class="sc">~</span>SERCAT1N,</span>
+<span id="cb7-53"><a href="#cb7-53" tabindex="-1"></a>  <span class="st">&quot;S-&quot;</span>, <span class="dv">1</span>,</span>
+<span id="cb7-54"><a href="#cb7-54" tabindex="-1"></a>  <span class="st">&quot;S+&quot;</span>, <span class="dv">2</span>,</span>
+<span id="cb7-55"><a href="#cb7-55" tabindex="-1"></a>  <span class="st">&quot;UNKNOWN&quot;</span>, <span class="dv">3</span>,</span>
+<span id="cb7-56"><a href="#cb7-56" tabindex="-1"></a>  <span class="cn">NA_character_</span>, <span class="cn">NA_real_</span></span>
+<span id="cb7-57"><a href="#cb7-57" tabindex="-1"></a>)</span>
+<span id="cb7-58"><a href="#cb7-58" tabindex="-1"></a></span>
+<span id="cb7-59"><a href="#cb7-59" tabindex="-1"></a>adis_sercat1n <span class="ot">&lt;-</span> <span class="fu">derive_vars_merged_lookup</span>(</span>
+<span id="cb7-60"><a href="#cb7-60" tabindex="-1"></a>  <span class="at">dataset =</span> adis_aval_sercat1,</span>
+<span id="cb7-61"><a href="#cb7-61" tabindex="-1"></a>  <span class="at">dataset_add =</span> param_lookup2,</span>
+<span id="cb7-62"><a href="#cb7-62" tabindex="-1"></a>  <span class="at">new_vars =</span> <span class="fu">exprs</span>(SERCAT1N),</span>
+<span id="cb7-63"><a href="#cb7-63" tabindex="-1"></a>  <span class="at">by_vars =</span> <span class="fu">exprs</span>(SERCAT1)</span>
+<span id="cb7-64"><a href="#cb7-64" tabindex="-1"></a>)</span>
+<span id="cb7-65"><a href="#cb7-65" tabindex="-1"></a><span class="co">#&gt; All `SERCAT1` are mapped.</span></span>
+<span id="cb7-66"><a href="#cb7-66" tabindex="-1"></a></span>
+<span id="cb7-67"><a href="#cb7-67" tabindex="-1"></a></span>
+<span id="cb7-68"><a href="#cb7-68" tabindex="-1"></a><span class="co"># DTYPE derivation.</span></span>
+<span id="cb7-69"><a href="#cb7-69" tabindex="-1"></a><span class="co"># Please update code when &lt;,&lt;=,&gt;,&gt;= are present in your lab results (in ISSTRESC)</span></span>
+<span id="cb7-70"><a href="#cb7-70" tabindex="-1"></a></span>
+<span id="cb7-71"><a href="#cb7-71" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">names</span>(adis_sercat1n) <span class="sc">==</span> <span class="st">&quot;ISULOQ&quot;</span>) <span class="sc">==</span> <span class="cn">TRUE</span>) {</span>
+<span id="cb7-72"><a href="#cb7-72" tabindex="-1"></a>  adis_dtype <span class="ot">&lt;-</span> adis_sercat1n <span class="sc">%&gt;%</span></span>
+<span id="cb7-73"><a href="#cb7-73" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">DTYPE =</span> <span class="fu">case_when</span>(</span>
+<span id="cb7-74"><a href="#cb7-74" tabindex="-1"></a>      DERIVED <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;ORIG&quot;</span>, <span class="st">&quot;LOG10&quot;</span>) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(ISLLOQ) <span class="sc">&amp;</span></span>
+<span id="cb7-75"><a href="#cb7-75" tabindex="-1"></a>        ((ISSTRESN <span class="sc">&lt;</span> ISLLOQ) <span class="sc">|</span> <span class="fu">grepl</span>(<span class="st">&quot;&lt;&quot;</span>, ISORRES)) <span class="sc">~</span> <span class="st">&quot;HALFLLOQ&quot;</span>,</span>
+<span id="cb7-76"><a href="#cb7-76" tabindex="-1"></a>      DERIVED <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;ORIG&quot;</span>, <span class="st">&quot;LOG10&quot;</span>) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(ISULOQ) <span class="sc">&amp;</span></span>
+<span id="cb7-77"><a href="#cb7-77" tabindex="-1"></a>        ((ISSTRESN <span class="sc">&gt;</span> ISULOQ) <span class="sc">|</span> <span class="fu">grepl</span>(<span class="st">&quot;&gt;&quot;</span>, ISORRES)) <span class="sc">~</span> <span class="st">&quot;ULOQ&quot;</span>,</span>
+<span id="cb7-78"><a href="#cb7-78" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA_character_</span></span>
+<span id="cb7-79"><a href="#cb7-79" tabindex="-1"></a>    ))</span>
+<span id="cb7-80"><a href="#cb7-80" tabindex="-1"></a>}</span>
+<span id="cb7-81"><a href="#cb7-81" tabindex="-1"></a></span>
+<span id="cb7-82"><a href="#cb7-82" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">names</span>(adis_sercat1n) <span class="sc">==</span> <span class="st">&quot;ISULOQ&quot;</span>) <span class="sc">==</span> <span class="cn">FALSE</span>) {</span>
+<span id="cb7-83"><a href="#cb7-83" tabindex="-1"></a>  adis_dtype <span class="ot">&lt;-</span> adis_sercat1n <span class="sc">%&gt;%</span></span>
+<span id="cb7-84"><a href="#cb7-84" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">DTYPE =</span> <span class="fu">case_when</span>(</span>
+<span id="cb7-85"><a href="#cb7-85" tabindex="-1"></a>      DERIVED <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;ORIG&quot;</span>, <span class="st">&quot;LOG10&quot;</span>) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(ISLLOQ) <span class="sc">&amp;</span></span>
+<span id="cb7-86"><a href="#cb7-86" tabindex="-1"></a>        ((ISSTRESN <span class="sc">&lt;</span> ISLLOQ) <span class="sc">|</span> <span class="fu">grepl</span>(<span class="st">&quot;&lt;&quot;</span>, ISORRES)) <span class="sc">~</span> <span class="st">&quot;HALFLLOQ&quot;</span>,</span>
+<span id="cb7-87"><a href="#cb7-87" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA_character_</span></span>
+<span id="cb7-88"><a href="#cb7-88" tabindex="-1"></a>    ))</span>
+<span id="cb7-89"><a href="#cb7-89" tabindex="-1"></a>}</span></code></pre></div>
 <table>
+<colgroup>
+<col width="11%" />
+<col width="11%" />
+<col width="20%" />
+<col width="9%" />
+<col width="7%" />
+<col width="7%" />
+<col width="11%" />
+<col width="9%" />
+<col width="11%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th align="left">USUBJID</th>
@@ -1223,50 +1323,62 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="base" class="section level2">
 <h2>Derive BASE Variables</h2>
-<p>Derive Baseline values for each Subject/Visit and relative flag, <code>ABLFL</code>.</p>
-<p>In a later stage, derive <code>BASECAT</code> variable, which represents the base category. Update accordingly.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="co"># BASETYPE derivation</span></a>
-<a class="sourceLine" id="cb8-2" data-line-number="2">adis_basetype &lt;-<span class="st"> </span><span class="kw">derive_basetype_records</span>(</a>
-<a class="sourceLine" id="cb8-3" data-line-number="3">  adis_dtype,</a>
-<a class="sourceLine" id="cb8-4" data-line-number="4">  <span class="dt">basetypes =</span> <span class="kw">exprs</span>(<span class="st">&quot;VISIT 1&quot;</span> =<span class="st"> </span>AVISITN <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">10</span>, <span class="dv">30</span>))</a>
-<a class="sourceLine" id="cb8-5" data-line-number="5">)</a>
-<a class="sourceLine" id="cb8-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb8-7" data-line-number="7"><span class="co"># BASE derivation</span></a>
-<a class="sourceLine" id="cb8-8" data-line-number="8">adis_base &lt;-<span class="st"> </span><span class="kw">derive_var_base</span>(</a>
-<a class="sourceLine" id="cb8-9" data-line-number="9">  adis_basetype,</a>
-<a class="sourceLine" id="cb8-10" data-line-number="10">  <span class="dt">by_vars =</span> <span class="kw">exprs</span>(STUDYID, USUBJID, PARAMN),</a>
-<a class="sourceLine" id="cb8-11" data-line-number="11">  <span class="dt">source_var =</span> AVAL,</a>
-<a class="sourceLine" id="cb8-12" data-line-number="12">  <span class="dt">new_var =</span> BASE,</a>
-<a class="sourceLine" id="cb8-13" data-line-number="13">  <span class="dt">filter =</span> VISITNUM <span class="op">==</span><span class="st"> </span><span class="dv">10</span></a>
-<a class="sourceLine" id="cb8-14" data-line-number="14">)</a>
-<a class="sourceLine" id="cb8-15" data-line-number="15"></a>
-<a class="sourceLine" id="cb8-16" data-line-number="16"></a>
-<a class="sourceLine" id="cb8-17" data-line-number="17"><span class="co"># ABLFL derivation</span></a>
-<a class="sourceLine" id="cb8-18" data-line-number="18">adis_ablfl &lt;-<span class="st"> </span><span class="kw">restrict_derivation</span>(</a>
-<a class="sourceLine" id="cb8-19" data-line-number="19">  adis_base,</a>
-<a class="sourceLine" id="cb8-20" data-line-number="20">  <span class="dt">derivation =</span> derive_var_extreme_flag,</a>
-<a class="sourceLine" id="cb8-21" data-line-number="21">  <span class="dt">args =</span> <span class="kw">params</span>(</a>
-<a class="sourceLine" id="cb8-22" data-line-number="22">    <span class="dt">by_vars =</span> <span class="kw">exprs</span>(STUDYID, USUBJID, PARAMN),</a>
-<a class="sourceLine" id="cb8-23" data-line-number="23">    <span class="dt">order =</span> <span class="kw">exprs</span>(STUDYID, USUBJID, VISITNUM, PARAMN),</a>
-<a class="sourceLine" id="cb8-24" data-line-number="24">    <span class="dt">new_var =</span> ABLFL,</a>
-<a class="sourceLine" id="cb8-25" data-line-number="25">    <span class="dt">mode =</span> <span class="st">&quot;first&quot;</span></a>
-<a class="sourceLine" id="cb8-26" data-line-number="26">  ),</a>
-<a class="sourceLine" id="cb8-27" data-line-number="27">  <span class="dt">filter =</span> VISITNUM <span class="op">==</span><span class="st"> </span><span class="dv">10</span> <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span><span class="kw">is.na</span>(BASE)</a>
-<a class="sourceLine" id="cb8-28" data-line-number="28">) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-29" data-line-number="29"><span class="st">  </span><span class="kw">arrange</span>(STUDYID, USUBJID, <span class="op">!</span><span class="kw">is.na</span>(DERIVED), VISITNUM, PARAMN)</a>
-<a class="sourceLine" id="cb8-30" data-line-number="30"></a>
-<a class="sourceLine" id="cb8-31" data-line-number="31"></a>
-<a class="sourceLine" id="cb8-32" data-line-number="32"><span class="co"># BASECAT derivation</span></a>
-<a class="sourceLine" id="cb8-33" data-line-number="33">adis_basecat &lt;-<span class="st"> </span>adis_ablfl <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-34" data-line-number="34"><span class="st">  </span><span class="kw">mutate</span>(</a>
-<a class="sourceLine" id="cb8-35" data-line-number="35">    <span class="dt">BASECAT1 =</span> <span class="kw">case_when</span>(</a>
-<a class="sourceLine" id="cb8-36" data-line-number="36">      <span class="op">!</span><span class="kw">grepl</span>(<span class="st">&quot;L&quot;</span>, PARAMCD) <span class="op">&amp;</span><span class="st"> </span>BASE <span class="op">&lt;</span><span class="st"> </span><span class="dv">10</span> <span class="op">~</span><span class="st"> &quot;Titer value &lt; 1:10&quot;</span>,</a>
-<a class="sourceLine" id="cb8-37" data-line-number="37">      <span class="op">!</span><span class="kw">grepl</span>(<span class="st">&quot;L&quot;</span>, PARAMCD) <span class="op">&amp;</span><span class="st"> </span>BASE <span class="op">&gt;=</span><span class="st"> </span><span class="dv">10</span> <span class="op">~</span><span class="st"> &quot;Titer value &gt;= 1:10&quot;</span>,</a>
-<a class="sourceLine" id="cb8-38" data-line-number="38">      <span class="kw">grepl</span>(<span class="st">&quot;L&quot;</span>, PARAMCD) <span class="op">&amp;</span><span class="st"> </span>BASE <span class="op">&lt;</span><span class="st"> </span><span class="dv">10</span> <span class="op">~</span><span class="st"> &quot;Titer value &lt; 1:10&quot;</span>,</a>
-<a class="sourceLine" id="cb8-39" data-line-number="39">      <span class="kw">grepl</span>(<span class="st">&quot;L&quot;</span>, PARAMCD) <span class="op">&amp;</span><span class="st"> </span>BASE <span class="op">&gt;=</span><span class="st"> </span><span class="dv">10</span> <span class="op">~</span><span class="st"> &quot;Titer value &gt;= 1:10&quot;</span></a>
-<a class="sourceLine" id="cb8-40" data-line-number="40">    )</a>
-<a class="sourceLine" id="cb8-41" data-line-number="41">  )</a></code></pre></div>
+<p>Derive Baseline values for each Subject/Visit and relative flag,
+<code>ABLFL</code>.</p>
+<p>In a later stage, derive <code>BASECAT</code> variable, which
+represents the base category. Update accordingly.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># BASETYPE derivation</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>adis_basetype <span class="ot">&lt;-</span> <span class="fu">derive_basetype_records</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  adis_dtype,</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="at">basetypes =</span> <span class="fu">exprs</span>(<span class="st">&quot;VISIT 1&quot;</span> <span class="ot">=</span> AVISITN <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">30</span>))</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>)</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="co"># BASE derivation</span></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>adis_base <span class="ot">&lt;-</span> <span class="fu">derive_var_base</span>(</span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>  adis_basetype,</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>  <span class="at">by_vars =</span> <span class="fu">exprs</span>(STUDYID, USUBJID, PARAMN),</span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>  <span class="at">source_var =</span> AVAL,</span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>  <span class="at">new_var =</span> BASE,</span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>  <span class="at">filter =</span> VISITNUM <span class="sc">==</span> <span class="dv">10</span></span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>)</span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="co"># ABLFL derivation</span></span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a>adis_ablfl <span class="ot">&lt;-</span> <span class="fu">restrict_derivation</span>(</span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a>  adis_base,</span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a>  <span class="at">derivation =</span> derive_var_extreme_flag,</span>
+<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a>  <span class="at">args =</span> <span class="fu">params</span>(</span>
+<span id="cb8-22"><a href="#cb8-22" tabindex="-1"></a>    <span class="at">by_vars =</span> <span class="fu">exprs</span>(STUDYID, USUBJID, PARAMN),</span>
+<span id="cb8-23"><a href="#cb8-23" tabindex="-1"></a>    <span class="at">order =</span> <span class="fu">exprs</span>(STUDYID, USUBJID, VISITNUM, PARAMN),</span>
+<span id="cb8-24"><a href="#cb8-24" tabindex="-1"></a>    <span class="at">new_var =</span> ABLFL,</span>
+<span id="cb8-25"><a href="#cb8-25" tabindex="-1"></a>    <span class="at">mode =</span> <span class="st">&quot;first&quot;</span></span>
+<span id="cb8-26"><a href="#cb8-26" tabindex="-1"></a>  ),</span>
+<span id="cb8-27"><a href="#cb8-27" tabindex="-1"></a>  <span class="at">filter =</span> VISITNUM <span class="sc">==</span> <span class="dv">10</span> <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(BASE)</span>
+<span id="cb8-28"><a href="#cb8-28" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-29"><a href="#cb8-29" tabindex="-1"></a>  <span class="fu">arrange</span>(STUDYID, USUBJID, <span class="sc">!</span><span class="fu">is.na</span>(DERIVED), VISITNUM, PARAMN)</span>
+<span id="cb8-30"><a href="#cb8-30" tabindex="-1"></a></span>
+<span id="cb8-31"><a href="#cb8-31" tabindex="-1"></a></span>
+<span id="cb8-32"><a href="#cb8-32" tabindex="-1"></a><span class="co"># BASECAT derivation</span></span>
+<span id="cb8-33"><a href="#cb8-33" tabindex="-1"></a>adis_basecat <span class="ot">&lt;-</span> adis_ablfl <span class="sc">%&gt;%</span></span>
+<span id="cb8-34"><a href="#cb8-34" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb8-35"><a href="#cb8-35" tabindex="-1"></a>    <span class="at">BASECAT1 =</span> <span class="fu">case_when</span>(</span>
+<span id="cb8-36"><a href="#cb8-36" tabindex="-1"></a>      <span class="sc">!</span><span class="fu">grepl</span>(<span class="st">&quot;L&quot;</span>, PARAMCD) <span class="sc">&amp;</span> BASE <span class="sc">&lt;</span> <span class="dv">10</span> <span class="sc">~</span> <span class="st">&quot;Titer value &lt; 1:10&quot;</span>,</span>
+<span id="cb8-37"><a href="#cb8-37" tabindex="-1"></a>      <span class="sc">!</span><span class="fu">grepl</span>(<span class="st">&quot;L&quot;</span>, PARAMCD) <span class="sc">&amp;</span> BASE <span class="sc">&gt;=</span> <span class="dv">10</span> <span class="sc">~</span> <span class="st">&quot;Titer value &gt;= 1:10&quot;</span>,</span>
+<span id="cb8-38"><a href="#cb8-38" tabindex="-1"></a>      <span class="fu">grepl</span>(<span class="st">&quot;L&quot;</span>, PARAMCD) <span class="sc">&amp;</span> BASE <span class="sc">&lt;</span> <span class="dv">10</span> <span class="sc">~</span> <span class="st">&quot;Titer value &lt; 1:10&quot;</span>,</span>
+<span id="cb8-39"><a href="#cb8-39" tabindex="-1"></a>      <span class="fu">grepl</span>(<span class="st">&quot;L&quot;</span>, PARAMCD) <span class="sc">&amp;</span> BASE <span class="sc">&gt;=</span> <span class="dv">10</span> <span class="sc">~</span> <span class="st">&quot;Titer value &gt;= 1:10&quot;</span></span>
+<span id="cb8-40"><a href="#cb8-40" tabindex="-1"></a>    )</span>
+<span id="cb8-41"><a href="#cb8-41" tabindex="-1"></a>  )</span></code></pre></div>
 <table>
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="20%" />
+<col width="9%" />
+<col width="7%" />
+<col width="8%" />
+<col width="10%" />
+<col width="23%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th align="left">USUBJID</th>
@@ -1387,23 +1499,23 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h2>Derive CHG and R2BASE Variables</h2>
 <p>Derive change from baseline values.</p>
 <p>Derive ratio to base values.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">adis_chg &lt;-<span class="st"> </span><span class="kw">restrict_derivation</span>(</a>
-<a class="sourceLine" id="cb9-2" data-line-number="2">  adis_basecat,</a>
-<a class="sourceLine" id="cb9-3" data-line-number="3">  <span class="dt">derivation =</span> derive_var_chg,</a>
-<a class="sourceLine" id="cb9-4" data-line-number="4">  <span class="dt">filter =</span> AVISITN <span class="op">&gt;</span><span class="st"> </span><span class="dv">10</span></a>
-<a class="sourceLine" id="cb9-5" data-line-number="5">)</a>
-<a class="sourceLine" id="cb9-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb9-7" data-line-number="7">adis_r2b &lt;-<span class="st"> </span><span class="kw">restrict_derivation</span>(</a>
-<a class="sourceLine" id="cb9-8" data-line-number="8">  adis_chg,</a>
-<a class="sourceLine" id="cb9-9" data-line-number="9">  <span class="dt">derivation =</span> derive_var_analysis_ratio,</a>
-<a class="sourceLine" id="cb9-10" data-line-number="10">  <span class="dt">args =</span> <span class="kw">params</span>(</a>
-<a class="sourceLine" id="cb9-11" data-line-number="11">    <span class="dt">numer_var =</span> AVAL,</a>
-<a class="sourceLine" id="cb9-12" data-line-number="12">    <span class="dt">denom_var =</span> BASE</a>
-<a class="sourceLine" id="cb9-13" data-line-number="13">  ),</a>
-<a class="sourceLine" id="cb9-14" data-line-number="14">  <span class="dt">filter =</span> AVISITN <span class="op">&gt;</span><span class="st"> </span><span class="dv">10</span></a>
-<a class="sourceLine" id="cb9-15" data-line-number="15">) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-16" data-line-number="16"><span class="st">  </span><span class="kw">arrange</span>(STUDYID, USUBJID, DERIVED, ISSEQ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-17" data-line-number="17"><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>DERIVED)</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>adis_chg <span class="ot">&lt;-</span> <span class="fu">restrict_derivation</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  adis_basecat,</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  <span class="at">derivation =</span> derive_var_chg,</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>  <span class="at">filter =</span> AVISITN <span class="sc">&gt;</span> <span class="dv">10</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>)</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>adis_r2b <span class="ot">&lt;-</span> <span class="fu">restrict_derivation</span>(</span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>  adis_chg,</span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>  <span class="at">derivation =</span> derive_var_analysis_ratio,</span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>  <span class="at">args =</span> <span class="fu">params</span>(</span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a>    <span class="at">numer_var =</span> AVAL,</span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a>    <span class="at">denom_var =</span> BASE</span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>  ),</span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a>  <span class="at">filter =</span> AVISITN <span class="sc">&gt;</span> <span class="dv">10</span></span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a>  <span class="fu">arrange</span>(STUDYID, USUBJID, DERIVED, ISSEQ) <span class="sc">%&gt;%</span></span>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>DERIVED)</span></code></pre></div>
 <table>
 <thead>
 <tr class="header">
@@ -1502,16 +1614,31 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div id="crit" class="section level2">
 <h2>Derive CRITx Variables</h2>
 <p>Derive Criteria Evaluation Analysis Flags.</p>
-<p>The function selects a subset of rows from the input dataset and apply a criterion to them. If this criterion is met then <code>CRIT1FL</code> (or the name you specified in the first argument) is equal to <code>Y</code>; <code>N</code> otherwise.</p>
-<p>The function returns a relative numeric <code>CRIT1FN</code> variable (<code>1</code> or <code>0</code> if the criterion is met, respectively) and a label <code>CRIT1</code> variable (with the text specified in label_var argument).</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">adis_crit &lt;-<span class="st"> </span><span class="kw">derive_vars_crit</span>(</a>
-<a class="sourceLine" id="cb10-2" data-line-number="2">  <span class="dt">dataset =</span> adis_r2b,</a>
-<a class="sourceLine" id="cb10-3" data-line-number="3">  <span class="dt">prefix =</span> <span class="st">&quot;CRIT1&quot;</span>,</a>
-<a class="sourceLine" id="cb10-4" data-line-number="4">  <span class="dt">crit_label =</span> <span class="st">&quot;Titer &gt;= ISLLOQ&quot;</span>,</a>
-<a class="sourceLine" id="cb10-5" data-line-number="5">  <span class="dt">condition =</span> <span class="op">!</span><span class="kw">is.na</span>(AVAL) <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span><span class="kw">is.na</span>(ISLLOQ),</a>
-<a class="sourceLine" id="cb10-6" data-line-number="6">  <span class="dt">criterion =</span> AVAL <span class="op">&gt;=</span><span class="st"> </span>ISLLOQ</a>
-<a class="sourceLine" id="cb10-7" data-line-number="7">)</a></code></pre></div>
+<p>The function selects a subset of rows from the input dataset and
+apply a criterion to them. If this criterion is met then
+<code>CRIT1FL</code> (or the name you specified in the first argument)
+is equal to <code>Y</code>; <code>N</code> otherwise.</p>
+<p>The function returns a relative numeric <code>CRIT1FN</code> variable
+(<code>1</code> or <code>0</code> if the criterion is met, respectively)
+and a label <code>CRIT1</code> variable (with the text specified in
+label_var argument).</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>adis_crit <span class="ot">&lt;-</span> <span class="fu">derive_vars_crit</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  <span class="at">dataset =</span> adis_r2b,</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>  <span class="at">prefix =</span> <span class="st">&quot;CRIT1&quot;</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>  <span class="at">crit_label =</span> <span class="st">&quot;Titer &gt;= ISLLOQ&quot;</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>  <span class="at">condition =</span> <span class="sc">!</span><span class="fu">is.na</span>(AVAL) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(ISLLOQ),</span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>  <span class="at">criterion =</span> AVAL <span class="sc">&gt;=</span> ISLLOQ</span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a>)</span></code></pre></div>
 <table>
+<colgroup>
+<col width="12%" />
+<col width="12%" />
+<col width="22%" />
+<col width="10%" />
+<col width="21%" />
+<col width="10%" />
+<col width="10%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th align="left">USUBJID</th>
@@ -1619,17 +1746,18 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="trtp" class="section level2">
 <h2>Derive TRTP/A Variables</h2>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">period_ref &lt;-<span class="st"> </span><span class="kw">create_period_dataset</span>(</a>
-<a class="sourceLine" id="cb11-2" data-line-number="2">  <span class="dt">dataset =</span> adsl,</a>
-<a class="sourceLine" id="cb11-3" data-line-number="3">  <span class="dt">new_vars =</span> <span class="kw">exprs</span>(<span class="dt">APERSDT =</span> APxxSDT, <span class="dt">APEREDT =</span> APxxEDT, <span class="dt">TRTA =</span> TRTxxA, <span class="dt">TRTP =</span> TRTxxP)</a>
-<a class="sourceLine" id="cb11-4" data-line-number="4">)</a>
-<a class="sourceLine" id="cb11-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb11-6" data-line-number="6">adis_trt &lt;-<span class="st"> </span><span class="kw">derive_vars_joined</span>(</a>
-<a class="sourceLine" id="cb11-7" data-line-number="7">  adis_crit,</a>
-<a class="sourceLine" id="cb11-8" data-line-number="8">  <span class="dt">dataset_add =</span> period_ref,</a>
-<a class="sourceLine" id="cb11-9" data-line-number="9">  <span class="dt">by_vars =</span> <span class="kw">exprs</span>(STUDYID, USUBJID),</a>
-<a class="sourceLine" id="cb11-10" data-line-number="10">  <span class="dt">filter_join =</span> ADT <span class="op">&gt;=</span><span class="st"> </span>APERSDT <span class="op">&amp;</span><span class="st"> </span>ADT <span class="op">&lt;=</span><span class="st"> </span>APEREDT</a>
-<a class="sourceLine" id="cb11-11" data-line-number="11">)</a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>period_ref <span class="ot">&lt;-</span> <span class="fu">create_period_dataset</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="at">dataset =</span> adsl,</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  <span class="at">new_vars =</span> <span class="fu">exprs</span>(<span class="at">APERSDT =</span> APxxSDT, <span class="at">APEREDT =</span> APxxEDT, <span class="at">TRTA =</span> TRTxxA, <span class="at">TRTP =</span> TRTxxP)</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>)</span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>adis_trt <span class="ot">&lt;-</span> <span class="fu">derive_vars_joined</span>(</span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>  adis_crit,</span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>  <span class="at">dataset_add =</span> period_ref,</span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a>  <span class="at">by_vars =</span> <span class="fu">exprs</span>(STUDYID, USUBJID),</span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a>  <span class="at">filter_join =</span> ADT <span class="sc">&gt;=</span> APERSDT <span class="sc">&amp;</span> ADT <span class="sc">&lt;=</span> APEREDT,</span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a>  <span class="at">join_type =</span> <span class="st">&quot;all&quot;</span></span>
+<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a>)</span></code></pre></div>
 <table>
 <thead>
 <tr class="header">
@@ -1727,10 +1855,11 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="pps" class="section level2">
 <h2>Derive PPS Record Level Flag Variable</h2>
-<p>This is a record level flag which identifies which rows are included/excluded for the PPS related objectives.</p>
+<p>This is a record level flag which identifies which rows are
+included/excluded for the PPS related objectives.</p>
 <p>This step could change according to your study needs.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">adis_ppsrfl &lt;-<span class="st"> </span>adis_trt <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb12-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">PPSRFL =</span> <span class="kw">if_else</span>(VISITNUM <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">10</span>, <span class="dv">30</span>) <span class="op">&amp;</span><span class="st"> </span>PPROTFL <span class="op">==</span><span class="st"> &quot;Y&quot;</span>, <span class="st">&quot;Y&quot;</span>, <span class="ot">NA_character_</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>adis_ppsrfl <span class="ot">&lt;-</span> adis_trt <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">PPSRFL =</span> <span class="fu">if_else</span>(VISITNUM <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">30</span>) <span class="sc">&amp;</span> PPROTFL <span class="sc">==</span> <span class="st">&quot;Y&quot;</span>, <span class="st">&quot;Y&quot;</span>, <span class="cn">NA_character_</span>))</span></code></pre></div>
 <table>
 <thead>
 <tr class="header">
@@ -1828,26 +1957,28 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="adsl_vars" class="section level2">
 <h2>Add ADSL Variables</h2>
-<p>Attach all <code>ADAM.ADSL</code> variables to the is build-in dataset.</p>
-<p>If you may need to keep only a subset of them, please update accordingly.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="co"># Get list of ADSL variables not to be added to ADIS</span></a>
-<a class="sourceLine" id="cb13-2" data-line-number="2">vx_adsl_vars &lt;-<span class="st"> </span><span class="kw">exprs</span>(RFSTDTC, PPROTFL)</a>
-<a class="sourceLine" id="cb13-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb13-4" data-line-number="4">adis &lt;-<span class="st"> </span><span class="kw">derive_vars_merged</span>(</a>
-<a class="sourceLine" id="cb13-5" data-line-number="5">  <span class="dt">dataset =</span> adis_ppsrfl,</a>
-<a class="sourceLine" id="cb13-6" data-line-number="6">  <span class="dt">dataset_add =</span> <span class="kw">select</span>(vx_adsl, <span class="op">!!!</span><span class="kw">negate_vars</span>(vx_adsl_vars)),</a>
-<a class="sourceLine" id="cb13-7" data-line-number="7">  <span class="dt">by_vars =</span> <span class="kw">exprs</span>(STUDYID, USUBJID)</a>
-<a class="sourceLine" id="cb13-8" data-line-number="8">)</a></code></pre></div>
+<p>Attach all <code>ADAM.ADSL</code> variables to the is build-in
+dataset.</p>
+<p>If you may need to keep only a subset of them, please update
+accordingly.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="co"># Get list of ADSL variables not to be added to ADIS</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>adsl_vars <span class="ot">&lt;-</span> <span class="fu">exprs</span>(RFSTDTC, PPROTFL)</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>adis <span class="ot">&lt;-</span> <span class="fu">derive_vars_merged</span>(</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>  <span class="at">dataset =</span> adis_ppsrfl,</span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>  <span class="at">dataset_add =</span> <span class="fu">select</span>(admiralvaccine_adsl, <span class="sc">!!!</span><span class="fu">negate_vars</span>(adsl_vars)),</span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a>  <span class="at">by_vars =</span> <span class="fu">exprs</span>(STUDYID, USUBJID)</span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a>)</span></code></pre></div>
 <table>
 <colgroup>
-<col width="9%"></col>
-<col width="9%"></col>
-<col width="17%"></col>
-<col width="8%"></col>
-<col width="4%"></col>
-<col width="8%"></col>
-<col width="21%"></col>
-<col width="21%"></col>
+<col width="9%" />
+<col width="9%" />
+<col width="17%" />
+<col width="8%" />
+<col width="4%" />
+<col width="8%" />
+<col width="21%" />
+<col width="21%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -1969,6 +2100,10 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div id="example-script" class="section level1">
 <h1>Example Script</h1>
 <table>
+<colgroup>
+<col width="22%" />
+<col width="77%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th>ADaM</th>

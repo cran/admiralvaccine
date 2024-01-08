@@ -14,91 +14,103 @@
 
 <title>Creating ADCE</title>
 
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 <style type="text/css">
-  code{white-space: pre-wrap;}
-  span.smallcaps{font-variant: small-caps;}
-  span.underline{text-decoration: underline;}
-  div.column{display: inline-block; vertical-align: top; width: 50%;}
-  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-  ul.task-list{list-style: none;}
-    </style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
 
 
 
 <style type="text/css">
-  code {
-    white-space: pre;
-  }
-  .sourceCode {
-    overflow: visible;
-  }
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
 </style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; position: absolute; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; }
-pre.numberSource a.sourceLine:empty
-  { position: absolute; }
-pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
-    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
 div.sourceCode
-  {  }
+{ }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
 </style>
 <script>
 // apply pandoc div.sourceCode style to pre.sourceCode instead
@@ -330,8 +342,14 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>This article describes creating an <code>ADCE</code> ADaM for the analysis of Vaccine Reactogenicity Data collected in SDTM <code>CE</code> domain. The current presented example is tested using <code>CE</code> SDTM domains and <code>ADSL</code> ADaM domain. However, other domains could be used if needed (eg temperature data collected in <code>VS</code>).</p>
-<p><strong>Note:</strong> <em>All examples assume CDISC SDTM and/or ADaM format as input unless otherwise specified.</em></p>
+<p>This article describes creating an <code>ADCE</code> ADaM for the
+analysis of Vaccine Reactogenicity Data collected in SDTM
+<code>CE</code> domain. The current presented example is tested using
+<code>CE</code> SDTM domains and <code>ADSL</code> ADaM domain. However,
+other domains could be used if needed (eg temperature data collected in
+<code>VS</code>).</p>
+<p><strong>Note:</strong> <em>All examples assume CDISC SDTM and/or ADaM
+format as input unless otherwise specified.</em></p>
 </div>
 <div id="programming-flow" class="section level1">
 <h1>Programming Flow</h1>
@@ -340,39 +358,45 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <li><a href="#cefilter">Pre-processing of Input Dataset</a></li>
 <li><a href="#adperiods">Create Reference Dataset for Periods</a></li>
 <li><a href="#adates">Derivation of Analysis Dates</a></li>
-<li><a href="#mergeperiods">Join with the Periods Reference Dataset and Derive Relative Day in Period</a></li>
-<li><a href="#agrade">Creation of Analysis Version for GRADING Variable (Either <code>TOXGR</code> or <code>SEV</code>)</a></li>
+<li><a href="#mergeperiods">Join with the Periods Reference Dataset and
+Derive Relative Day in Period</a></li>
+<li><a href="#agrade">Creation of Analysis Version for GRADING Variable
+(Either <code>TOXGR</code> or <code>SEV</code>)</a></li>
 <li><a href="#aseq">Creation of Analysis Sequence Number</a></li>
-<li><a href="#jadsl_list">Final Step : Get All the Remaining Variables from <code>ADSL</code></a></li>
+<li><a href="#jadsl_list">Final Step : Get All the Remaining Variables
+from <code>ADSL</code></a></li>
 </ul>
 <div id="readdata" class="section level2">
 <h2>Read in Data</h2>
-<p>Assumption: The <code>CE</code> domain has already been merged with the <code>SUPPCE</code> dataset. If this is not yet the case, join <code>SUPPCE</code> onto parent <code>CE</code> domain using <code>metatools::combine_supp(CE, SUPPCE)</code>.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(admiraldev)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">library</span>(admiral)</a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">library</span>(dplyr)</a>
-<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="kw">library</span>(lubridate)</a>
-<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="kw">library</span>(admiralvaccine)</a>
-<a class="sourceLine" id="cb1-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="kw">data</span>(<span class="st">&quot;vx_ce&quot;</span>)</a>
-<a class="sourceLine" id="cb1-8" data-line-number="8"><span class="kw">data</span>(<span class="st">&quot;vx_adsl&quot;</span>)</a>
-<a class="sourceLine" id="cb1-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb1-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb1-11" data-line-number="11">adsl &lt;-<span class="st"> </span>vx_adsl</a>
-<a class="sourceLine" id="cb1-12" data-line-number="12">ce &lt;-<span class="st"> </span>vx_ce</a>
-<a class="sourceLine" id="cb1-13" data-line-number="13"></a>
-<a class="sourceLine" id="cb1-14" data-line-number="14">ce &lt;-<span class="st"> </span><span class="kw">convert_blanks_to_na</span>(ce)</a>
-<a class="sourceLine" id="cb1-15" data-line-number="15">adsl &lt;-<span class="st"> </span><span class="kw">convert_blanks_to_na</span>(adsl)</a></code></pre></div>
+<p>Assumption: The <code>CE</code> domain has already been merged with
+the <code>SUPPCE</code> dataset. If this is not yet the case, join
+<code>SUPPCE</code> onto parent <code>CE</code> domain using
+<code>metatools::combine_supp(CE, SUPPCE)</code>.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(admiraldev)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(admiral)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="fu">library</span>(admiralvaccine)</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="fu">library</span>(pharmaversesdtm)</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;ce_vaccine&quot;</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;admiralvaccine_adsl&quot;</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>adsl <span class="ot">&lt;-</span> admiralvaccine_adsl</span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>ce <span class="ot">&lt;-</span> ce_vaccine</span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>ce <span class="ot">&lt;-</span> <span class="fu">convert_blanks_to_na</span>(ce)</span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>adsl <span class="ot">&lt;-</span> <span class="fu">convert_blanks_to_na</span>(adsl)</span></code></pre></div>
 <table>
 <colgroup>
-<col width="10%"></col>
-<col width="12%"></col>
-<col width="12%"></col>
-<col width="11%"></col>
-<col width="12%"></col>
-<col width="12%"></col>
-<col width="12%"></col>
-<col width="12%"></col>
+<col width="10%" />
+<col width="12%" />
+<col width="12%" />
+<col width="11%" />
+<col width="12%" />
+<col width="12%" />
+<col width="12%" />
+<col width="12%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -388,16 +412,6 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">ABC-1002</td>
-<td align="left">2021-10-07</td>
-<td align="left">2021-12-16</td>
-<td align="left">VACCINE A</td>
-<td align="left">2021-10-07</td>
-<td align="left">2021-12-15</td>
-<td align="left">2021-12-16</td>
-<td align="left">2022-06-14</td>
-</tr>
-<tr class="even">
 <td align="left">ABC-1001</td>
 <td align="left">2021-11-03</td>
 <td align="left">2021-12-30</td>
@@ -407,25 +421,39 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <td align="left">2021-12-30</td>
 <td align="left">2022-04-27</td>
 </tr>
+<tr class="even">
+<td align="left">ABC-1002</td>
+<td align="left">2021-10-07</td>
+<td align="left">2021-12-16</td>
+<td align="left">VACCINE A</td>
+<td align="left">2021-10-07</td>
+<td align="left">2021-12-15</td>
+<td align="left">2021-12-16</td>
+<td align="left">2022-06-14</td>
+</tr>
 </tbody>
 </table>
 </div>
 <div id="cefilter" class="section level2">
 <h2>Pre-processing of Input Dataset</h2>
-<p>This step involves company-specific pre-processing of required input dataset for further analysis. In this step, we will filter records that has only reactogenicity events.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">adce &lt;-<span class="st"> </span>ce <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(CECAT <span class="op">==</span><span class="st"> &quot;REACTOGENICITY&quot;</span>)</a></code></pre></div>
+<p>This step involves company-specific pre-processing of required input
+dataset for further analysis. In this step, we will filter records that
+has only reactogenicity events.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>adce <span class="ot">&lt;-</span> ce <span class="sc">%&gt;%</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  <span class="fu">filter</span>(CECAT <span class="sc">==</span> <span class="st">&quot;REACTOGENICITY&quot;</span>)</span></code></pre></div>
 </div>
 <div id="adperiods" class="section level2">
 <h2>Create Reference Dataset for Periods</h2>
-<p>Create period dataset - for joining period information onto <code>CE</code> records. Need to remove datetime variables as otherwise causes duplicate issues.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">adsl2 &lt;-<span class="st"> </span>adsl <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span><span class="kw">c</span>(<span class="kw">starts_with</span>(<span class="st">&quot;AP&quot;</span>) <span class="op">&amp;</span><span class="st"> </span><span class="kw">ends_with</span>(<span class="st">&quot;DTM&quot;</span>)))</a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb3-4" data-line-number="4">adperiods &lt;-<span class="st"> </span><span class="kw">create_period_dataset</span>(</a>
-<a class="sourceLine" id="cb3-5" data-line-number="5">  adsl2,</a>
-<a class="sourceLine" id="cb3-6" data-line-number="6">  <span class="dt">new_vars =</span> <span class="kw">exprs</span>(<span class="dt">APERSDT =</span> APxxSDT, <span class="dt">APEREDT =</span> APxxEDT)</a>
-<a class="sourceLine" id="cb3-7" data-line-number="7">)</a></code></pre></div>
+<p>Create period dataset - for joining period information onto
+<code>CE</code> records. Need to remove datetime variables as otherwise
+causes duplicate issues.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>adsl2 <span class="ot">&lt;-</span> adsl <span class="sc">%&gt;%</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="fu">starts_with</span>(<span class="st">&quot;AP&quot;</span>) <span class="sc">&amp;</span> <span class="fu">ends_with</span>(<span class="st">&quot;DTM&quot;</span>)))</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>adperiods <span class="ot">&lt;-</span> <span class="fu">create_period_dataset</span>(</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>  adsl2,</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  <span class="at">new_vars =</span> <span class="fu">exprs</span>(<span class="at">APERSDT =</span> APxxSDT, <span class="at">APEREDT =</span> APxxEDT)</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>)</span></code></pre></div>
 <table>
 <thead>
 <tr class="header">
@@ -437,18 +465,6 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">ABC-1002</td>
-<td align="right">1</td>
-<td align="left">2021-10-07</td>
-<td align="left">2021-12-15</td>
-</tr>
-<tr class="even">
-<td align="left">ABC-1002</td>
-<td align="right">2</td>
-<td align="left">2021-12-16</td>
-<td align="left">2022-06-14</td>
-</tr>
-<tr class="odd">
 <td align="left">ABC-1001</td>
 <td align="right">1</td>
 <td align="left">2021-11-03</td>
@@ -460,36 +476,61 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <td align="left">2021-12-30</td>
 <td align="left">2022-04-27</td>
 </tr>
+<tr class="odd">
+<td align="left">ABC-1002</td>
+<td align="right">1</td>
+<td align="left">2021-10-07</td>
+<td align="left">2021-12-15</td>
+</tr>
+<tr class="even">
+<td align="left">ABC-1002</td>
+<td align="right">2</td>
+<td align="left">2021-12-16</td>
+<td align="left">2022-06-14</td>
+</tr>
 </tbody>
 </table>
 </div>
 <div id="adates" class="section level2">
 <h2>Derivation of Analysis Dates</h2>
-<p>At this step, it may be useful to join <code>ADSL</code> to your <code>CE</code> domain. Only the <code>ADSL</code> variables used for derivations are selected at this step. The rest of the relevant <code>ADSL</code> variables would be added later.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">adsl_vars &lt;-<span class="st"> </span><span class="kw">exprs</span>(TRTSDT, TRTEDT)</a>
-<a class="sourceLine" id="cb4-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb4-3" data-line-number="3">adce &lt;-<span class="st"> </span>adce <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="st">  </span><span class="co"># join ADSL to CE</span></a>
-<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="st">  </span><span class="kw">derive_vars_merged</span>(</a>
-<a class="sourceLine" id="cb4-6" data-line-number="6">    <span class="dt">dataset_add =</span> adsl,</a>
-<a class="sourceLine" id="cb4-7" data-line-number="7">    <span class="dt">new_vars =</span> adsl_vars,</a>
-<a class="sourceLine" id="cb4-8" data-line-number="8">    <span class="dt">by =</span> <span class="kw">exprs</span>(STUDYID, USUBJID)</a>
-<a class="sourceLine" id="cb4-9" data-line-number="9">  ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-10" data-line-number="10"><span class="st">  </span><span class="kw">derive_vars_dt</span>(</a>
-<a class="sourceLine" id="cb4-11" data-line-number="11">    <span class="dt">dtc =</span> CESTDTC,</a>
-<a class="sourceLine" id="cb4-12" data-line-number="12">    <span class="dt">new_vars_prefix =</span> <span class="st">&quot;AST&quot;</span>,</a>
-<a class="sourceLine" id="cb4-13" data-line-number="13">    <span class="dt">highest_imputation =</span> <span class="st">&quot;n&quot;</span></a>
-<a class="sourceLine" id="cb4-14" data-line-number="14">  ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-15" data-line-number="15"><span class="st">  </span><span class="kw">derive_vars_dt</span>(</a>
-<a class="sourceLine" id="cb4-16" data-line-number="16">    <span class="dt">dtc =</span> CEENDTC,</a>
-<a class="sourceLine" id="cb4-17" data-line-number="17">    <span class="dt">new_vars_prefix =</span> <span class="st">&quot;AEN&quot;</span>,</a>
-<a class="sourceLine" id="cb4-18" data-line-number="18">    <span class="dt">highest_imputation =</span> <span class="st">&quot;n&quot;</span></a>
-<a class="sourceLine" id="cb4-19" data-line-number="19">  ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-20" data-line-number="20"><span class="st">  </span><span class="kw">derive_vars_dy</span>(</a>
-<a class="sourceLine" id="cb4-21" data-line-number="21">    <span class="dt">reference_date =</span> TRTSDT,</a>
-<a class="sourceLine" id="cb4-22" data-line-number="22">    <span class="dt">source_vars =</span> <span class="kw">exprs</span>(ASTDT, AENDT)</a>
-<a class="sourceLine" id="cb4-23" data-line-number="23">  )</a></code></pre></div>
+<p>At this step, it may be useful to join <code>ADSL</code> to your
+<code>CE</code> domain. Only the <code>ADSL</code> variables used for
+derivations are selected at this step. The rest of the relevant
+<code>ADSL</code> variables would be added later.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>adsl_vars <span class="ot">&lt;-</span> <span class="fu">exprs</span>(TRTSDT, TRTEDT)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>adce <span class="ot">&lt;-</span> adce <span class="sc">%&gt;%</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  <span class="co"># join ADSL to CE</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>  <span class="fu">derive_vars_merged</span>(</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>    <span class="at">dataset_add =</span> adsl,</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>    <span class="at">new_vars =</span> adsl_vars,</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">exprs</span>(STUDYID, USUBJID)</span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>  <span class="fu">derive_vars_dt</span>(</span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>    <span class="at">dtc =</span> CESTDTC,</span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>    <span class="at">new_vars_prefix =</span> <span class="st">&quot;AST&quot;</span>,</span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>    <span class="at">highest_imputation =</span> <span class="st">&quot;n&quot;</span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>  <span class="fu">derive_vars_dt</span>(</span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a>    <span class="at">dtc =</span> CEENDTC,</span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a>    <span class="at">new_vars_prefix =</span> <span class="st">&quot;AEN&quot;</span>,</span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a>    <span class="at">highest_imputation =</span> <span class="st">&quot;n&quot;</span></span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a>  <span class="fu">derive_vars_dy</span>(</span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a>    <span class="at">reference_date =</span> TRTSDT,</span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a>    <span class="at">source_vars =</span> <span class="fu">exprs</span>(ASTDT, AENDT)</span>
+<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a>  )</span></code></pre></div>
 <table>
+<colgroup>
+<col width="11%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="7%" />
+<col width="7%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th align="left">USUBJID</th>
@@ -607,20 +648,34 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </table>
 </div>
 <div id="mergeperiods" class="section level2">
-<h2>Join with the Periods Reference Dataset and Derive Relative Day in Period</h2>
-<p>Also add analysis version of <code>CEREL</code>(<code>AREL</code>).</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">adce &lt;-</a>
-<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="st">  </span><span class="kw">derive_vars_joined</span>(</a>
-<a class="sourceLine" id="cb5-3" data-line-number="3">    adce,</a>
-<a class="sourceLine" id="cb5-4" data-line-number="4">    <span class="dt">dataset_add =</span> adperiods,</a>
-<a class="sourceLine" id="cb5-5" data-line-number="5">    <span class="dt">by_vars =</span> <span class="kw">exprs</span>(STUDYID, USUBJID),</a>
-<a class="sourceLine" id="cb5-6" data-line-number="6">    <span class="dt">filter_join =</span> ASTDT <span class="op">&gt;=</span><span class="st"> </span>APERSDT <span class="op">&amp;</span><span class="st"> </span>ASTDT <span class="op">&lt;=</span><span class="st"> </span>APEREDT</a>
-<a class="sourceLine" id="cb5-7" data-line-number="7">  ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="st">  </span><span class="kw">mutate</span>(</a>
-<a class="sourceLine" id="cb5-9" data-line-number="9">    <span class="dt">APERSTDY =</span> <span class="kw">as.integer</span>(ASTDT <span class="op">-</span><span class="st"> </span>APERSDT) <span class="op">+</span><span class="st"> </span><span class="dv">1</span>,</a>
-<a class="sourceLine" id="cb5-10" data-line-number="10">    <span class="dt">AREL =</span> CEREL</a>
-<a class="sourceLine" id="cb5-11" data-line-number="11">  )</a></code></pre></div>
-<table>
+<h2>Join with the Periods Reference Dataset and Derive Relative Day in
+Period</h2>
+<p>Also add analysis version of
+<code>CEREL</code>(<code>AREL</code>).</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>adce <span class="ot">&lt;-</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="fu">derive_vars_joined</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>    adce,</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>    <span class="at">dataset_add =</span> adperiods,</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>    <span class="at">by_vars =</span> <span class="fu">exprs</span>(STUDYID, USUBJID),</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>    <span class="at">filter_join =</span> ASTDT <span class="sc">&gt;=</span> APERSDT <span class="sc">&amp;</span> ASTDT <span class="sc">&lt;=</span> APEREDT,</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>    <span class="at">join_type =</span> <span class="st">&quot;all&quot;</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>    <span class="at">APERSTDY =</span> <span class="fu">as.integer</span>(ASTDT <span class="sc">-</span> APERSDT) <span class="sc">+</span> <span class="dv">1</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>    <span class="at">AREL =</span> CEREL</span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>  )</span></code></pre></div>
+<table style="width:100%;">
+<colgroup>
+<col width="10%" />
+<col width="13%" />
+<col width="13%" />
+<col width="13%" />
+<col width="7%" />
+<col width="7%" />
+<col width="9%" />
+<col width="13%" />
+<col width="10%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th align="left">USUBJID</th>
@@ -749,26 +804,45 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </table>
 </div>
 <div id="agrade" class="section level2">
-<h2>Creation of Analysis Version for GRADING Variable (Either <code>TOXGR</code> or <code>SEV</code>)</h2>
-<p>Depending on which variable is collected for the Grading (<code>TOXGR</code> or <code>SEV</code>) in <code>CE</code> domain, derive the associated analysis version. In current example, <code>SEV</code> is collected, so the code is using this as an example. In addition, derivation of Extreme Flags: in current example: flag the first occurrence of the most severe grade within a Period (<code>AOCC01FL</code>).</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">adce &lt;-<span class="st"> </span>adce <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(</a>
-<a class="sourceLine" id="cb6-3" data-line-number="3">    <span class="dt">ASEV =</span> CESEV,</a>
-<a class="sourceLine" id="cb6-4" data-line-number="4">    <span class="dt">ASEVN =</span> <span class="kw">as.integer</span>(<span class="kw">factor</span>(ASEV,</a>
-<a class="sourceLine" id="cb6-5" data-line-number="5">      <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;MILD&quot;</span>, <span class="st">&quot;MODERATE&quot;</span>, <span class="st">&quot;SEVERE&quot;</span>, <span class="st">&quot;DEATH THREATENING&quot;</span>)</a>
-<a class="sourceLine" id="cb6-6" data-line-number="6">    ))</a>
-<a class="sourceLine" id="cb6-7" data-line-number="7">  ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="st">  </span><span class="kw">restrict_derivation</span>(</a>
-<a class="sourceLine" id="cb6-9" data-line-number="9">    <span class="dt">derivation =</span> derive_var_extreme_flag,</a>
-<a class="sourceLine" id="cb6-10" data-line-number="10">    <span class="dt">args =</span> <span class="kw">params</span>(</a>
-<a class="sourceLine" id="cb6-11" data-line-number="11">      <span class="dt">by_vars =</span> <span class="kw">exprs</span>(USUBJID, APERIOD),</a>
-<a class="sourceLine" id="cb6-12" data-line-number="12">      <span class="dt">order =</span> <span class="kw">exprs</span>(<span class="kw">desc</span>(ASEVN), ASTDY, CEDECOD),</a>
-<a class="sourceLine" id="cb6-13" data-line-number="13">      <span class="dt">new_var =</span> AOCC01FL,</a>
-<a class="sourceLine" id="cb6-14" data-line-number="14">      <span class="dt">mode =</span> <span class="st">&quot;first&quot;</span></a>
-<a class="sourceLine" id="cb6-15" data-line-number="15">    ),</a>
-<a class="sourceLine" id="cb6-16" data-line-number="16">    <span class="dt">filter =</span> <span class="op">!</span><span class="kw">is.na</span>(APERIOD) <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span><span class="kw">is.na</span>(ASEV)</a>
-<a class="sourceLine" id="cb6-17" data-line-number="17">  )</a></code></pre></div>
+<h2>Creation of Analysis Version for GRADING Variable (Either
+<code>TOXGR</code> or <code>SEV</code>)</h2>
+<p>Depending on which variable is collected for the Grading
+(<code>TOXGR</code> or <code>SEV</code>) in <code>CE</code> domain,
+derive the associated analysis version. In current example,
+<code>SEV</code> is collected, so the code is using this as an example.
+In addition, derivation of Extreme Flags: in current example: flag the
+first occurrence of the most severe grade within a Period
+(<code>AOCC01FL</code>).</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>adce <span class="ot">&lt;-</span> adce <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>    <span class="at">ASEV =</span> CESEV,</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>    <span class="at">ASEVN =</span> <span class="fu">as.integer</span>(<span class="fu">factor</span>(ASEV,</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>      <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;MILD&quot;</span>, <span class="st">&quot;MODERATE&quot;</span>, <span class="st">&quot;SEVERE&quot;</span>, <span class="st">&quot;DEATH THREATENING&quot;</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>    ))</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>  <span class="fu">restrict_derivation</span>(</span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>    <span class="at">derivation =</span> derive_var_extreme_flag,</span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>    <span class="at">args =</span> <span class="fu">params</span>(</span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>      <span class="at">by_vars =</span> <span class="fu">exprs</span>(USUBJID, APERIOD),</span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>      <span class="at">order =</span> <span class="fu">exprs</span>(<span class="fu">desc</span>(ASEVN), ASTDY, CEDECOD),</span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a>      <span class="at">new_var =</span> AOCC01FL,</span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a>      <span class="at">mode =</span> <span class="st">&quot;first&quot;</span></span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a>    ),</span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a>    <span class="at">filter =</span> <span class="sc">!</span><span class="fu">is.na</span>(APERIOD) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(ASEV)</span>
+<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a>  )</span></code></pre></div>
 <table>
+<colgroup>
+<col width="9%" />
+<col width="11%" />
+<col width="11%" />
+<col width="8%" />
+<col width="11%" />
+<col width="9%" />
+<col width="20%" />
+<col width="6%" />
+<col width="9%" />
+<col width="6%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th align="left">USUBJID</th>
@@ -909,24 +983,37 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="aseq" class="section level2">
 <h2>Creation of Analysis Sequence Number</h2>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">adce &lt;-<span class="st"> </span>adce <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="st">  </span><span class="kw">derive_var_obs_number</span>(</a>
-<a class="sourceLine" id="cb7-3" data-line-number="3">    <span class="dt">new_var =</span> ASEQ,</a>
-<a class="sourceLine" id="cb7-4" data-line-number="4">    <span class="dt">by_vars =</span> <span class="kw">exprs</span>(STUDYID, USUBJID),</a>
-<a class="sourceLine" id="cb7-5" data-line-number="5">    <span class="dt">order =</span> <span class="kw">exprs</span>(CEDECOD, CELAT, CETPTREF, APERIOD),</a>
-<a class="sourceLine" id="cb7-6" data-line-number="6">    <span class="dt">check_type =</span> <span class="st">&quot;error&quot;</span></a>
-<a class="sourceLine" id="cb7-7" data-line-number="7">  ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="st">  </span><span class="kw">derive_vars_duration</span>(</a>
-<a class="sourceLine" id="cb7-9" data-line-number="9">    <span class="dt">new_var =</span> ADURN,</a>
-<a class="sourceLine" id="cb7-10" data-line-number="10">    <span class="dt">new_var_unit =</span> ADURU,</a>
-<a class="sourceLine" id="cb7-11" data-line-number="11">    <span class="dt">start_date =</span> ASTDT,</a>
-<a class="sourceLine" id="cb7-12" data-line-number="12">    <span class="dt">end_date =</span> AENDT,</a>
-<a class="sourceLine" id="cb7-13" data-line-number="13">    <span class="dt">in_unit =</span> <span class="st">&quot;days&quot;</span>,</a>
-<a class="sourceLine" id="cb7-14" data-line-number="14">    <span class="dt">out_unit =</span> <span class="st">&quot;days&quot;</span>,</a>
-<a class="sourceLine" id="cb7-15" data-line-number="15">    <span class="dt">add_one =</span> <span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb7-16" data-line-number="16">    <span class="dt">trunc_out =</span> <span class="ot">FALSE</span></a>
-<a class="sourceLine" id="cb7-17" data-line-number="17">  )</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>adce <span class="ot">&lt;-</span> adce <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">derive_var_obs_number</span>(</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>    <span class="at">new_var =</span> ASEQ,</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    <span class="at">by_vars =</span> <span class="fu">exprs</span>(STUDYID, USUBJID),</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>    <span class="at">order =</span> <span class="fu">exprs</span>(CEDECOD, CELAT, CETPTREF, APERIOD),</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>    <span class="at">check_type =</span> <span class="st">&quot;error&quot;</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>  <span class="fu">derive_vars_duration</span>(</span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>    <span class="at">new_var =</span> ADURN,</span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>    <span class="at">new_var_unit =</span> ADURU,</span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>    <span class="at">start_date =</span> ASTDT,</span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>    <span class="at">end_date =</span> AENDT,</span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a>    <span class="at">in_unit =</span> <span class="st">&quot;days&quot;</span>,</span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>    <span class="at">out_unit =</span> <span class="st">&quot;days&quot;</span>,</span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a>    <span class="at">add_one =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a>    <span class="at">trunc_out =</span> <span class="cn">FALSE</span></span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a>  )</span></code></pre></div>
 <table>
+<colgroup>
+<col width="9%" />
+<col width="11%" />
+<col width="11%" />
+<col width="8%" />
+<col width="11%" />
+<col width="9%" />
+<col width="11%" />
+<col width="6%" />
+<col width="9%" />
+<col width="6%" />
+<col width="5%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th align="left">USUBJID</th>
@@ -1077,31 +1164,33 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </table>
 </div>
 <div id="jadsl_list" class="section level2">
-<h2>Final Step : Get All the Remaining Variables from <code>ADSL</code></h2>
-<p>Get list of <code>ADSL</code> vars as per trial specific which needs to be adjusted when using the template</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">adsl_list &lt;-<span class="st"> </span>adsl <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="st">  </span><span class="kw">select</span>(STUDYID, USUBJID, TRT01A, TRT01P, AGE, AGEU, SEX, RACE, COUNTRY, ETHNIC, SITEID, SUBJID)</a>
-<a class="sourceLine" id="cb8-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb8-4" data-line-number="4">adce &lt;-<span class="st"> </span>adce <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="st">  </span><span class="kw">derive_vars_merged</span>(</a>
-<a class="sourceLine" id="cb8-6" data-line-number="6">    <span class="dt">dataset_add =</span> adsl_list,</a>
-<a class="sourceLine" id="cb8-7" data-line-number="7">    <span class="dt">by_vars =</span> <span class="kw">exprs</span>(STUDYID, USUBJID)</a>
-<a class="sourceLine" id="cb8-8" data-line-number="8">  )</a></code></pre></div>
+<h2>Final Step : Get All the Remaining Variables from
+<code>ADSL</code></h2>
+<p>Get list of <code>ADSL</code> vars as per trial specific which needs
+to be adjusted when using the template</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>adsl_list <span class="ot">&lt;-</span> adsl <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="fu">select</span>(STUDYID, USUBJID, TRT01A, TRT01P, AGE, AGEU, SEX, RACE, COUNTRY, ETHNIC, SITEID, SUBJID)</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>adce <span class="ot">&lt;-</span> adce <span class="sc">%&gt;%</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>  <span class="fu">derive_vars_merged</span>(</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>    <span class="at">dataset_add =</span> adsl_list,</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>    <span class="at">by_vars =</span> <span class="fu">exprs</span>(STUDYID, USUBJID)</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>  )</span></code></pre></div>
 <table>
 <colgroup>
-<col width="8%"></col>
-<col width="10%"></col>
-<col width="10%"></col>
-<col width="7%"></col>
-<col width="10%"></col>
-<col width="8%"></col>
-<col width="10%"></col>
-<col width="5%"></col>
-<col width="8%"></col>
-<col width="5%"></col>
-<col width="4%"></col>
-<col width="3%"></col>
-<col width="3%"></col>
+<col width="8%" />
+<col width="10%" />
+<col width="10%" />
+<col width="7%" />
+<col width="10%" />
+<col width="8%" />
+<col width="10%" />
+<col width="5%" />
+<col width="8%" />
+<col width="5%" />
+<col width="4%" />
+<col width="3%" />
+<col width="3%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -1278,6 +1367,10 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div id="example-script" class="section level1">
 <h1>Example Script</h1>
 <table>
+<colgroup>
+<col width="22%" />
+<col width="77%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th>ADaM</th>

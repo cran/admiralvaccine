@@ -3,20 +3,21 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-library(admiraldev)
-library(admiral)
-library(admiralvaccine)
 
 ## ---- message=FALSE, warning=FALSE--------------------------------------------
 library(admiral)
+library(admiralvaccine)
+library(pharmaversesdtm)
 library(dplyr, warn.conflicts = FALSE)
-library(admiral.test)
 library(lubridate)
 library(stringr)
-data("vx_dm")
-data("vx_ex")
-dm <- convert_blanks_to_na(vx_dm)
-ex <- convert_blanks_to_na(vx_ex)
+library(admiraldev)
+
+data("dm_vaccine")
+data("ex_vaccine")
+
+dm <- convert_blanks_to_na(dm_vaccine)
+ex <- convert_blanks_to_na(ex_vaccine)
 
 ## ----eval=TRUE----------------------------------------------------------------
 adsl <- dm %>%

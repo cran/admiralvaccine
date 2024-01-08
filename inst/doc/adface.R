@@ -4,29 +4,30 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-library(admiraldev)
-
 ## ----message=FALSE------------------------------------------------------------
 library(admiral)
 library(admiralvaccine)
+library(admiraldev)
+library(pharmaversesdtm)
 library(dplyr, warn.conflicts = FALSE)
 library(lubridate)
 library(stringr)
 library(tidyr)
 library(tibble)
-data("vx_face")
-data("vx_suppface")
-data("vx_ex")
-data("vx_suppex")
-data("vx_vs")
-data("vx_adsl")
 
-face <- convert_blanks_to_na(vx_face)
-ex <- convert_blanks_to_na(vx_ex)
-vs <- convert_blanks_to_na(vx_vs)
-suppface <- convert_blanks_to_na(vx_suppface)
-suppex <- convert_blanks_to_na(vx_suppex)
-adsl <- convert_blanks_to_na(vx_adsl)
+data("face_vaccine")
+data("suppface_vaccine")
+data("ex_vaccine")
+data("suppex_vaccine")
+data("vs_vaccine")
+data("admiralvaccine_adsl")
+
+face <- convert_blanks_to_na(face_vaccine)
+ex <- convert_blanks_to_na(ex_vaccine)
+vs <- convert_blanks_to_na(vs_vaccine)
+suppface <- convert_blanks_to_na(suppface_vaccine)
+suppex <- convert_blanks_to_na(suppex_vaccine)
+adsl <- convert_blanks_to_na(admiralvaccine_adsl)
 
 ## ----eval=TRUE----------------------------------------------------------------
 face <- face %>%
@@ -75,7 +76,7 @@ dataset_vignette(
 ## ----eval=TRUE----------------------------------------------------------------
 adface <- derive_fever_records(
   dataset = adface,
-  dataset_source = vs,
+  dataset_source = ungroup(vs),
   filter_source = VSCAT == "REACTOGENICITY" & VSTESTCD == "TEMP",
   faobj = "FEVER"
 )
@@ -123,7 +124,8 @@ adface <- derive_vars_joined(
   adface,
   dataset_add = period_ref,
   by_vars = exprs(STUDYID, USUBJID),
-  filter_join = ADT >= APERSDT & ADT <= APEREDT
+  filter_join = ADT >= APERSDT & ADT <= APEREDT,
+  join_type = "all"
 )
 
 ## ---- echo=FALSE--------------------------------------------------------------
@@ -183,6 +185,7 @@ dataset_vignette(
 ## ----eval=TRUE----------------------------------------------------------------
 adface <- derive_extreme_records(
   dataset = adface,
+  dataset_add = adface,
   filter_add = FATESTCD == "SEV",
   by_vars = exprs(USUBJID, FAOBJ, ATPTREF),
   order = exprs(AVAL),
@@ -196,6 +199,7 @@ adface <- derive_extreme_records(
 
 adface <- derive_extreme_records(
   dataset = adface,
+  dataset_add = adface,
   filter_add = FAOBJ %in% c("REDNESS", "SWELLING") & FATESTCD == "DIAMETER",
   by_vars = exprs(USUBJID, FAOBJ, FALNKGRP),
   order = exprs(AVAL),
@@ -209,6 +213,7 @@ adface <- derive_extreme_records(
 
 adface <- derive_extreme_records(
   dataset = adface,
+  dataset_add = adface,
   filter_add = FAOBJ == "FEVER",
   by_vars = exprs(USUBJID, FAOBJ, ATPTREF),
   order = exprs(VSSTRESN),

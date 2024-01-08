@@ -24,15 +24,16 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Vikram S \email{vikram.s@pfizer.com}
+  \item Arjun Rubalingam \email{arjun.rubalingam@pfizer.com}
   \item Ben Straub \email{ben.x.straub@gsk.com}
-  \item Arjun Rubalingam
+  \item Vikram S
   \item Dhivya Kanagaraj
   \item Federico Baratin
   \item Yamini Purna Bollu
   \item Ilse Augustyns
   \item Kalyani Bodicherla
   \item Hilde Delanghe
+  \item Lee Armishaw
 }
 
 Other contributors:

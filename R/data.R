@@ -1,94 +1,39 @@
-#' Immunogenicity Specimen
+#' Subject Level Analysis Dataset - Vaccine Specific
 #'
-#' A SDTM IS dataset
+#' An example Subject Level analysis dataset
 #'
 #' @keywords dataset
 #' @family dataset
-"vx_is"
+#' @source
+#' (\url{https://github.com/pharmaverse/admiralvaccine/blob/main/inst/templates/ad_adsl.R})
+"admiralvaccine_adsl"
 
-#' Clinical Events
+#' Clinical Events Analysis Dataset - Vaccine Specific
 #'
-#' A SDTM CE dataset
+#' An example Clinical Events analysis dataset
 #'
 #' @keywords dataset
 #' @family dataset
-"vx_ce"
+#' @source
+#' (\url{https://github.com/pharmaverse/admiralvaccine/blob/main/inst/templates/ad_adce.R})
+"admiralvaccine_adce"
 
-#' Demographics
+#' Findings About Clinical Events Analysis Dataset - Vaccine Specific
 #'
-#' A SDTM DM dataset
+#' An example Findings About Clinical Events analysis dataset
 #'
 #' @keywords dataset
 #' @family dataset
-"vx_dm"
+#' @source
+#' (\url{https://github.com/pharmaverse/admiralvaccine/blob/main/inst/templates/ad_adface.R})
+"admiralvaccine_adface"
 
-#' Exposure
+#' Immunogenicity Specimen Assessments Analysis Dataset - Vaccine Specific
 #'
-#' A SDTM EX dataset
-#'
-#' @keywords dataset
-#' @family dataset
-"vx_ex"
-
-#' Findings About Clinical Events
-#'
-#' A SDTM FACE dataset
+#' An example Immunogenicity Specimen Assessments analysis dataset
 #'
 #' @keywords dataset
 #' @family dataset
-"vx_face"
-
-#' Vital Signs
-#'
-#' A SDTM VS dataset
-#'
-#' @keywords dataset
-#' @family dataset
-"vx_vs"
-
-#' Subject Level Analysis - Vaccine Specific
-#'
-#' A subject level analysis dataset
-#'
-#' @keywords dataset
-#' @family dataset
-"vx_adsl"
-
-#' Supplemental Immunogenicity Specimen
-#'
-#' A SDTM Supplementary IS dataset
-#'
-#' @keywords dataset
-#' @family dataset
-"vx_suppis"
-
-#' Supplemental Clinical Events
-#'
-#' A SDTM Supplementary CE dataset
-#'
-#' @keywords dataset
-#' @family dataset
-"vx_suppce"
-
-#' Supplemental Demographics
-#'
-#' A SDTM Supplementary DM dataset
-#'
-#' @keywords dataset
-#' @family dataset
-"vx_suppdm"
-
-#' Supplemental Exposure
-#' A SDTM Supplementary EX dataset
-#'
-#' @keywords dataset
-#' @family dataset
-"vx_suppex"
-
-#' Supplemental Findings About Clinical Events
-#'
-#' A SDTM Supplementary FACE dataset
-#'
-#' @keywords dataset
-#' @family dataset
-"vx_suppface"
+#' @source
+#' (\url{https://github.com/pharmaverse/admiralvaccine/blob/main/inst/templates/ad_adis.R})
+"admiralvaccine_adis"
