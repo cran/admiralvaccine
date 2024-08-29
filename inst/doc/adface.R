@@ -32,7 +32,9 @@ adsl <- convert_blanks_to_na(admiralvaccine_adsl)
 ## ----eval=TRUE----------------------------------------------------------------
 face <- face %>%
   filter(FACAT == "REACTOGENICITY" & grepl("ADMIN|SYS", FASCAT)) %>%
-  mutate(FAOBJ = str_to_upper(FAOBJ))
+  mutate(FAOBJ = str_to_upper(FAOBJ)) %>%
+  metatools::combine_supp(suppface)
+ex <- metatools::combine_supp(ex, suppex)
 
 ## ---- echo=FALSE--------------------------------------------------------------
 dataset_vignette(
@@ -44,8 +46,6 @@ dataset_vignette(
 adface <- derive_vars_merged_vaccine(
   dataset = face,
   dataset_ex = ex,
-  dataset_supp = suppface,
-  dataset_suppex = suppex,
   by_vars_sys = exprs(USUBJID, FATPTREF = EXLNKGRP),
   by_vars_adms = exprs(USUBJID, FATPTREF = EXLNKGRP, FALOC = EXLOC, FALAT = EXLAT),
   ex_vars = exprs(EXTRT, EXDOSE, EXSEQ, EXSTDTC, EXENDTC, VISIT, VISITNUM)
@@ -64,7 +64,7 @@ adface <- derive_vars_merged(
   face,
   dataset_add = adsl,
   new_vars = adsl_vars,
-  by_vars = exprs(STUDYID, USUBJID)
+  by_vars = get_admiral_option("subject_keys")
 )
 
 ## ---- echo=FALSE--------------------------------------------------------------
@@ -123,7 +123,7 @@ period_ref <- create_period_dataset(
 adface <- derive_vars_joined(
   adface,
   dataset_add = period_ref,
-  by_vars = exprs(STUDYID, USUBJID),
+  by_vars = get_admiral_option("subject_keys"),
   filter_join = ADT >= APERSDT & ADT <= APEREDT,
   join_type = "all"
 )
@@ -162,9 +162,27 @@ dataset_vignette(
   display_vars = exprs(USUBJID, FAOBJ, AVAL, AVALC, ATPTREF, ATPTN)
 )
 
+## ----eval = TRUE--------------------------------------------------------------
+adface <- adface %>% derive_var_extreme_flag(
+  by = exprs(STUDYID, USUBJID, FATPTREF, FAOBJ, FATESTCD, FATPTNUM),
+  order = exprs(STUDYID, USUBJID, FATPTREF, FAOBJ, FATESTCD, FATPTNUM, FAEVAL),
+  new_var = ANL01FL,
+  mode = "first",
+  true_value = "Y",
+  false_value = NA_character_
+)
+
+## ---- echo=FALSE--------------------------------------------------------------
+dataset_vignette(
+  adface,
+  display_vars = exprs(USUBJID, FAOBJ, ATPTREF, FATESTCD, FATEST, AVAL, ANL01FL),
+  filter = ANL01FL == "Y"
+)
+
 ## ----eval=TRUE----------------------------------------------------------------
 adface <- derive_diam_to_sev_records(
   dataset = adface,
+  filter_add = ANL01FL == "Y",
   diam_code = "DIAMETER",
   faobj_values = c("REDNESS", "SWELLING"),
   testcd_sev = "SEV",
@@ -186,7 +204,7 @@ dataset_vignette(
 adface <- derive_extreme_records(
   dataset = adface,
   dataset_add = adface,
-  filter_add = FATESTCD == "SEV",
+  filter_add = FATESTCD == "SEV" & ANL01FL == "Y",
   by_vars = exprs(USUBJID, FAOBJ, ATPTREF),
   order = exprs(AVAL),
   check_type = "none",
@@ -200,7 +218,7 @@ adface <- derive_extreme_records(
 adface <- derive_extreme_records(
   dataset = adface,
   dataset_add = adface,
-  filter_add = FAOBJ %in% c("REDNESS", "SWELLING") & FATESTCD == "DIAMETER",
+  filter_add = FAOBJ %in% c("REDNESS", "SWELLING") & FATESTCD == "DIAMETER" & ANL01FL == "Y",
   by_vars = exprs(USUBJID, FAOBJ, FALNKGRP),
   order = exprs(AVAL),
   check_type = "none",
@@ -214,7 +232,7 @@ adface <- derive_extreme_records(
 adface <- derive_extreme_records(
   dataset = adface,
   dataset_add = adface,
-  filter_add = FAOBJ == "FEVER",
+  filter_add = FAOBJ == "FEVER" & ANL01FL == "Y",
   by_vars = exprs(USUBJID, FAOBJ, ATPTREF),
   order = exprs(VSSTRESN),
   check_type = "none",
@@ -266,7 +284,7 @@ lookup_dataset <- tribble(
   "MAXDIAM", "MDISW", 29, "Maximum Diameter", "SWELLING",
   "MAXSEV", "MAXSPIS", 30, "Maximum Severity", "PAIN AT INJECTION SITE",
   "OCCUR", "OCCVOM", 31, "Occurrence Indicator", "VOMITING",
-  "DIAMETER", "DIASWEL", 32, "Diameter", "SWELLING",
+  "DIAMETER", "DIASWEL", 32, "Diameter", "SWELLING"
 )
 
 ## ----eval=TRUE----------------------------------------------------------------
@@ -285,8 +303,8 @@ dataset_vignette(
 ## ----eval=TRUE----------------------------------------------------------------
 adface <- derive_vars_max_flag(
   dataset = adface,
-  flag1 = "ANL01FL",
-  flag2 = "ANL02FL"
+  flag1 = "ANL02FL",
+  flag2 = "ANL03FL"
 )
 
 ## ---- echo=FALSE--------------------------------------------------------------
@@ -325,7 +343,7 @@ adsl <- adsl %>%
 adface <- derive_vars_merged(
   dataset = adface,
   dataset_add = select(adsl, !!!negate_vars(adsl_vars)),
-  by_vars = exprs(STUDYID, USUBJID)
+  by_vars = get_admiral_option("subject_keys")
 )
 
 ## ---- echo=FALSE--------------------------------------------------------------

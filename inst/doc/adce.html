@@ -504,7 +504,7 @@ derivations are selected at this step. The rest of the relevant
 <span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>  <span class="fu">derive_vars_merged</span>(</span>
 <span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>    <span class="at">dataset_add =</span> adsl,</span>
 <span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>    <span class="at">new_vars =</span> adsl_vars,</span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">exprs</span>(STUDYID, USUBJID)</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">get_admiral_option</span>(<span class="st">&quot;subject_keys&quot;</span>)</span>
 <span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
 <span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>  <span class="fu">derive_vars_dt</span>(</span>
 <span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>    <span class="at">dtc =</span> CESTDTC,</span>
@@ -656,7 +656,7 @@ Period</h2>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="fu">derive_vars_joined</span>(</span>
 <span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>    adce,</span>
 <span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>    <span class="at">dataset_add =</span> adperiods,</span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>    <span class="at">by_vars =</span> <span class="fu">exprs</span>(STUDYID, USUBJID),</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>    <span class="at">by_vars =</span> <span class="fu">get_admiral_option</span>(<span class="st">&quot;subject_keys&quot;</span>),</span>
 <span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>    <span class="at">filter_join =</span> ASTDT <span class="sc">&gt;=</span> APERSDT <span class="sc">&amp;</span> ASTDT <span class="sc">&lt;=</span> APEREDT,</span>
 <span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>    <span class="at">join_type =</span> <span class="st">&quot;all&quot;</span></span>
 <span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
@@ -986,7 +986,7 @@ first occurrence of the most severe grade within a Period
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>adce <span class="ot">&lt;-</span> adce <span class="sc">%&gt;%</span></span>
 <span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">derive_var_obs_number</span>(</span>
 <span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>    <span class="at">new_var =</span> ASEQ,</span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    <span class="at">by_vars =</span> <span class="fu">exprs</span>(STUDYID, USUBJID),</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    <span class="at">by_vars =</span> <span class="fu">get_admiral_option</span>(<span class="st">&quot;subject_keys&quot;</span>),</span>
 <span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>    <span class="at">order =</span> <span class="fu">exprs</span>(CEDECOD, CELAT, CETPTREF, APERIOD),</span>
 <span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>    <span class="at">check_type =</span> <span class="st">&quot;error&quot;</span></span>
 <span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
@@ -1174,7 +1174,7 @@ to be adjusted when using the template</p>
 <span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>adce <span class="ot">&lt;-</span> adce <span class="sc">%&gt;%</span></span>
 <span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>  <span class="fu">derive_vars_merged</span>(</span>
 <span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>    <span class="at">dataset_add =</span> adsl_list,</span>
-<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>    <span class="at">by_vars =</span> <span class="fu">exprs</span>(STUDYID, USUBJID)</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>    <span class="at">by_vars =</span> <span class="fu">get_admiral_option</span>(<span class="st">&quot;subject_keys&quot;</span>)</span>
 <span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>  )</span></code></pre></div>
 <table>
 <colgroup>

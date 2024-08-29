@@ -99,13 +99,13 @@ adsl <- dm %>%
     dataset_add = ex,
     filter_add = EXLNKGRP == "VACCINATION 1",
     new_vars = exprs(TRT01A = EXTRT),
-    by_vars = exprs(STUDYID, USUBJID)
+    by_vars = get_admiral_option("subject_keys")
   ) %>%
   derive_vars_merged(
     dataset_add = ex,
     filter_add = EXLNKGRP == "VACCINATION 2",
     new_vars = exprs(TRT02A = EXTRT),
-    by_vars = exprs(STUDYID, USUBJID)
+    by_vars = get_admiral_option("subject_keys")
   )
 ```
 
@@ -141,7 +141,7 @@ adsl <- adsl %>%
     new_vars = exprs(TRTSDTM = EXSTDTM),
     order = exprs(EXSTDTM, EXSEQ),
     mode = "first",
-    by_vars = exprs(STUDYID, USUBJID)
+    by_vars = get_admiral_option("subject_keys")
   ) %>%
   derive_vars_merged(
     dataset_add = ex_ext,
@@ -151,7 +151,7 @@ adsl <- adsl %>%
     new_vars = exprs(TRTEDTM = EXENDTM),
     order = exprs(EXENDTM, EXSEQ),
     mode = "last",
-    by_vars = exprs(STUDYID, USUBJID)
+    by_vars = get_admiral_option("subject_keys")
   )
 ```
 
@@ -292,7 +292,7 @@ file(xpt)](https://documentation.sas.com/doc/en/pgmsascdc/9.4_3.5/movefile/n1xbw
 NOTE: All these packages are in the experimental phase, but the vision is to
 have them associated with an End to End pipeline under the umbrella of the
 [pharmaverse](https://github.com/pharmaverse). An example of applying metadata 
-and perform associated checks can be found at the [pharmaverse E2E example](https://examples.pharmaverse.org/data/adsl/).
+and perform associated checks can be found at the [pharmaverse E2E example](https://pharmaverse.github.io/examples/adam/adsl.html).
 
 # Example Script 
 

@@ -416,10 +416,14 @@ data frames needed are <code>VS</code>,<code>EX</code> and
 <h2>Pre-processing of Input Dataset</h2>
 <p>This step involves company-specific pre-processing of required input
 dataset for further analysis. In this step, we will filter records that
-has only reactogenicity events.</p>
+has only reactogenicity events and combine the <code>face</code> and
+<code>ex</code> with their supplementary datasets <code>suppface</code>
+and <code>suppex</code> respectively.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>face <span class="ot">&lt;-</span> face <span class="sc">%&gt;%</span></span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  <span class="fu">filter</span>(FACAT <span class="sc">==</span> <span class="st">&quot;REACTOGENICITY&quot;</span> <span class="sc">&amp;</span> <span class="fu">grepl</span>(<span class="st">&quot;ADMIN|SYS&quot;</span>, FASCAT)) <span class="sc">%&gt;%</span></span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">FAOBJ =</span> <span class="fu">str_to_upper</span>(FAOBJ))</span></code></pre></div>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">FAOBJ =</span> <span class="fu">str_to_upper</span>(FAOBJ)) <span class="sc">%&gt;%</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>  metatools<span class="sc">::</span><span class="fu">combine_supp</span>(suppface)</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>ex <span class="ot">&lt;-</span> metatools<span class="sc">::</span><span class="fu">combine_supp</span>(ex, suppex)</span></code></pre></div>
 <table>
 <colgroup>
 <col width="8%" />
@@ -547,12 +551,10 @@ merge <code>face</code> with <code>ex</code> domain.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>adface <span class="ot">&lt;-</span> <span class="fu">derive_vars_merged_vaccine</span>(</span>
 <span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="at">dataset =</span> face,</span>
 <span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="at">dataset_ex =</span> ex,</span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="at">dataset_supp =</span> suppface,</span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>  <span class="at">dataset_suppex =</span> suppex,</span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  <span class="at">by_vars_sys =</span> <span class="fu">exprs</span>(USUBJID, <span class="at">FATPTREF =</span> EXLNKGRP),</span>
-<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>  <span class="at">by_vars_adms =</span> <span class="fu">exprs</span>(USUBJID, <span class="at">FATPTREF =</span> EXLNKGRP, <span class="at">FALOC =</span> EXLOC, <span class="at">FALAT =</span> EXLAT),</span>
-<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>  <span class="at">ex_vars =</span> <span class="fu">exprs</span>(EXTRT, EXDOSE, EXSEQ, EXSTDTC, EXENDTC, VISIT, VISITNUM)</span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>)</span></code></pre></div>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="at">by_vars_sys =</span> <span class="fu">exprs</span>(USUBJID, <span class="at">FATPTREF =</span> EXLNKGRP),</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>  <span class="at">by_vars_adms =</span> <span class="fu">exprs</span>(USUBJID, <span class="at">FATPTREF =</span> EXLNKGRP, <span class="at">FALOC =</span> EXLOC, <span class="at">FALAT =</span> EXLAT),</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  <span class="at">ex_vars =</span> <span class="fu">exprs</span>(EXTRT, EXDOSE, EXSEQ, EXSTDTC, EXENDTC, VISIT, VISITNUM)</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>)</span></code></pre></div>
 <table>
 <thead>
 <tr class="header">
@@ -655,7 +657,7 @@ derivations are selected at this step. The rest of the relevant
 <span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  face,</span>
 <span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>  <span class="at">dataset_add =</span> adsl,</span>
 <span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>  <span class="at">new_vars =</span> adsl_vars,</span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>  <span class="at">by_vars =</span> <span class="fu">exprs</span>(STUDYID, USUBJID)</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>  <span class="at">by_vars =</span> <span class="fu">get_admiral_option</span>(<span class="st">&quot;subject_keys&quot;</span>)</span>
 <span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>)</span></code></pre></div>
 <table>
 <thead>
@@ -976,7 +978,7 @@ treatment start and end date.</p>
 <span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>adface <span class="ot">&lt;-</span> <span class="fu">derive_vars_joined</span>(</span>
 <span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>  adface,</span>
 <span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>  <span class="at">dataset_add =</span> period_ref,</span>
-<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>  <span class="at">by_vars =</span> <span class="fu">exprs</span>(STUDYID, USUBJID),</span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>  <span class="at">by_vars =</span> <span class="fu">get_admiral_option</span>(<span class="st">&quot;subject_keys&quot;</span>),</span>
 <span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>  <span class="at">filter_join =</span> ADT <span class="sc">&gt;=</span> APERSDT <span class="sc">&amp;</span> ADT <span class="sc">&lt;=</span> APEREDT,</span>
 <span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>  <span class="at">join_type =</span> <span class="st">&quot;all&quot;</span></span>
 <span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a>)</span></code></pre></div>
@@ -1193,23 +1195,156 @@ mapping may be:</p>
 </tbody>
 </table>
 </div>
+<div id="derive-an01fl" class="section level2">
+<h2>Derive AN01FL</h2>
+<p>Creating ANL01FL which would flag the records that will be considered
+for analysis and if there is any Investigator and Subject record for the
+same day, it would flag the Investigator record over the subject
+record.</p>
+<p>Note: Please, consider which assessment is needed for your analysis.
+If you want to prioritize Investigator assessment, please proceed as
+follows. Otherwise, change FAEVAL order.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>adface <span class="ot">&lt;-</span> adface <span class="sc">%&gt;%</span> <span class="fu">derive_var_extreme_flag</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="at">by =</span> <span class="fu">exprs</span>(STUDYID, USUBJID, FATPTREF, FAOBJ, FATESTCD, FATPTNUM),</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  <span class="at">order =</span> <span class="fu">exprs</span>(STUDYID, USUBJID, FATPTREF, FAOBJ, FATESTCD, FATPTNUM, FAEVAL),</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>  <span class="at">new_var =</span> ANL01FL,</span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>  <span class="at">mode =</span> <span class="st">&quot;first&quot;</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>  <span class="at">true_value =</span> <span class="st">&quot;Y&quot;</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>  <span class="at">false_value =</span> <span class="cn">NA_character_</span></span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>)</span></code></pre></div>
+<table>
+<colgroup>
+<col width="12%" />
+<col width="12%" />
+<col width="18%" />
+<col width="12%" />
+<col width="28%" />
+<col width="6%" />
+<col width="10%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">USUBJID</th>
+<th align="left">FAOBJ</th>
+<th align="left">ATPTREF</th>
+<th align="left">FATESTCD</th>
+<th align="left">FATEST</th>
+<th align="right">AVAL</th>
+<th align="left">ANL01FL</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">ABC-1001</td>
+<td align="left">CHILLS</td>
+<td align="left">VACCINATION 1</td>
+<td align="left">OCCUR</td>
+<td align="left">Occurrence Indicator</td>
+<td align="right">NA</td>
+<td align="left">Y</td>
+</tr>
+<tr class="even">
+<td align="left">ABC-1001</td>
+<td align="left">CHILLS</td>
+<td align="left">VACCINATION 1</td>
+<td align="left">OCCUR</td>
+<td align="left">Occurrence Indicator</td>
+<td align="right">NA</td>
+<td align="left">Y</td>
+</tr>
+<tr class="odd">
+<td align="left">ABC-1001</td>
+<td align="left">CHILLS</td>
+<td align="left">VACCINATION 1</td>
+<td align="left">OCCUR</td>
+<td align="left">Occurrence Indicator</td>
+<td align="right">NA</td>
+<td align="left">Y</td>
+</tr>
+<tr class="even">
+<td align="left">ABC-1001</td>
+<td align="left">CHILLS</td>
+<td align="left">VACCINATION 1</td>
+<td align="left">OCCUR</td>
+<td align="left">Occurrence Indicator</td>
+<td align="right">NA</td>
+<td align="left">Y</td>
+</tr>
+<tr class="odd">
+<td align="left">ABC-1001</td>
+<td align="left">CHILLS</td>
+<td align="left">VACCINATION 1</td>
+<td align="left">OCCUR</td>
+<td align="left">Occurrence Indicator</td>
+<td align="right">NA</td>
+<td align="left">Y</td>
+</tr>
+<tr class="even">
+<td align="left">ABC-1001</td>
+<td align="left">CHILLS</td>
+<td align="left">VACCINATION 1</td>
+<td align="left">OCCUR</td>
+<td align="left">Occurrence Indicator</td>
+<td align="right">NA</td>
+<td align="left">Y</td>
+</tr>
+<tr class="odd">
+<td align="left">ABC-1001</td>
+<td align="left">CHILLS</td>
+<td align="left">VACCINATION 1</td>
+<td align="left">OCCUR</td>
+<td align="left">Occurrence Indicator</td>
+<td align="right">NA</td>
+<td align="left">Y</td>
+</tr>
+<tr class="even">
+<td align="left">ABC-1001</td>
+<td align="left">DIARRHEA</td>
+<td align="left">VACCINATION 1</td>
+<td align="left">OCCUR</td>
+<td align="left">Occurrence Indicator</td>
+<td align="right">NA</td>
+<td align="left">Y</td>
+</tr>
+<tr class="odd">
+<td align="left">ABC-1001</td>
+<td align="left">DIARRHEA</td>
+<td align="left">VACCINATION 1</td>
+<td align="left">OCCUR</td>
+<td align="left">Occurrence Indicator</td>
+<td align="right">NA</td>
+<td align="left">Y</td>
+</tr>
+<tr class="even">
+<td align="left">ABC-1001</td>
+<td align="left">DIARRHEA</td>
+<td align="left">VACCINATION 1</td>
+<td align="left">OCCUR</td>
+<td align="left">Occurrence Indicator</td>
+<td align="right">NA</td>
+<td align="left">Y</td>
+</tr>
+</tbody>
+</table>
+</div>
 <div id="sev" class="section level2">
 <h2>Derive Severity Records for Administration Site Events</h2>
 <p>The function <code>derive_diam_to_sev_records()</code> is used to
 derive the severity records from the diameter records for an event.</p>
 <p>The severity records created will be useful for calculating the
 maximum severity.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>adface <span class="ot">&lt;-</span> <span class="fu">derive_diam_to_sev_records</span>(</span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="at">dataset =</span> adface,</span>
-<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  <span class="at">diam_code =</span> <span class="st">&quot;DIAMETER&quot;</span>,</span>
-<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>  <span class="at">faobj_values =</span> <span class="fu">c</span>(<span class="st">&quot;REDNESS&quot;</span>, <span class="st">&quot;SWELLING&quot;</span>),</span>
-<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>  <span class="at">testcd_sev =</span> <span class="st">&quot;SEV&quot;</span>,</span>
-<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>  <span class="at">test_sev =</span> <span class="st">&quot;Severity/Intensity&quot;</span>,</span>
-<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>  <span class="at">none =</span> <span class="dv">0</span>,</span>
-<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>  <span class="at">mild =</span> <span class="dv">2</span>,</span>
-<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a>  <span class="at">mod =</span> <span class="dv">5</span>,</span>
-<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a>  <span class="at">sev =</span> <span class="dv">10</span></span>
-<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>adface <span class="ot">&lt;-</span> <span class="fu">derive_diam_to_sev_records</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  <span class="at">dataset =</span> adface,</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>  <span class="at">filter_add =</span> ANL01FL <span class="sc">==</span> <span class="st">&quot;Y&quot;</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>  <span class="at">diam_code =</span> <span class="st">&quot;DIAMETER&quot;</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>  <span class="at">faobj_values =</span> <span class="fu">c</span>(<span class="st">&quot;REDNESS&quot;</span>, <span class="st">&quot;SWELLING&quot;</span>),</span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>  <span class="at">testcd_sev =</span> <span class="st">&quot;SEV&quot;</span>,</span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>  <span class="at">test_sev =</span> <span class="st">&quot;Severity/Intensity&quot;</span>,</span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>  <span class="at">none =</span> <span class="dv">0</span>,</span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a>  <span class="at">mild =</span> <span class="dv">2</span>,</span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a>  <span class="at">mod =</span> <span class="dv">5</span>,</span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a>  <span class="at">sev =</span> <span class="dv">10</span></span>
+<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a>)</span></code></pre></div>
 <table style="width:100%;">
 <colgroup>
 <col width="12%" />
@@ -1337,47 +1472,47 @@ well.</p>
 <p>In this step, we will derive maximum records for severity, diameter,
 temperature using the function
 <code>derive_extreme_records()</code>.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>adface <span class="ot">&lt;-</span> <span class="fu">derive_extreme_records</span>(</span>
-<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  <span class="at">dataset =</span> adface,</span>
-<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>  <span class="at">dataset_add =</span> adface,</span>
-<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>  <span class="at">filter_add =</span> FATESTCD <span class="sc">==</span> <span class="st">&quot;SEV&quot;</span>,</span>
-<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>  <span class="at">by_vars =</span> <span class="fu">exprs</span>(USUBJID, FAOBJ, ATPTREF),</span>
-<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>  <span class="at">order =</span> <span class="fu">exprs</span>(AVAL),</span>
-<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>  <span class="at">check_type =</span> <span class="st">&quot;none&quot;</span>,</span>
-<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>  <span class="at">mode =</span> <span class="st">&quot;last&quot;</span>,</span>
-<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a>  <span class="at">set_values_to =</span> <span class="fu">exprs</span>(</span>
-<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a>    <span class="at">FATEST =</span> <span class="st">&quot;Maximum Severity&quot;</span>,</span>
-<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a>    <span class="at">FATESTCD =</span> <span class="st">&quot;MAXSEV&quot;</span></span>
-<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a>  )</span>
-<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a>)</span>
-<span id="cb12-14"><a href="#cb12-14" tabindex="-1"></a></span>
-<span id="cb12-15"><a href="#cb12-15" tabindex="-1"></a>adface <span class="ot">&lt;-</span> <span class="fu">derive_extreme_records</span>(</span>
-<span id="cb12-16"><a href="#cb12-16" tabindex="-1"></a>  <span class="at">dataset =</span> adface,</span>
-<span id="cb12-17"><a href="#cb12-17" tabindex="-1"></a>  <span class="at">dataset_add =</span> adface,</span>
-<span id="cb12-18"><a href="#cb12-18" tabindex="-1"></a>  <span class="at">filter_add =</span> FAOBJ <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;REDNESS&quot;</span>, <span class="st">&quot;SWELLING&quot;</span>) <span class="sc">&amp;</span> FATESTCD <span class="sc">==</span> <span class="st">&quot;DIAMETER&quot;</span>,</span>
-<span id="cb12-19"><a href="#cb12-19" tabindex="-1"></a>  <span class="at">by_vars =</span> <span class="fu">exprs</span>(USUBJID, FAOBJ, FALNKGRP),</span>
-<span id="cb12-20"><a href="#cb12-20" tabindex="-1"></a>  <span class="at">order =</span> <span class="fu">exprs</span>(AVAL),</span>
-<span id="cb12-21"><a href="#cb12-21" tabindex="-1"></a>  <span class="at">check_type =</span> <span class="st">&quot;none&quot;</span>,</span>
-<span id="cb12-22"><a href="#cb12-22" tabindex="-1"></a>  <span class="at">mode =</span> <span class="st">&quot;last&quot;</span>,</span>
-<span id="cb12-23"><a href="#cb12-23" tabindex="-1"></a>  <span class="at">set_values_to =</span> <span class="fu">exprs</span>(</span>
-<span id="cb12-24"><a href="#cb12-24" tabindex="-1"></a>    <span class="at">FATEST =</span> <span class="st">&quot;Maximum Diameter&quot;</span>,</span>
-<span id="cb12-25"><a href="#cb12-25" tabindex="-1"></a>    <span class="at">FATESTCD =</span> <span class="st">&quot;MAXDIAM&quot;</span></span>
-<span id="cb12-26"><a href="#cb12-26" tabindex="-1"></a>  )</span>
-<span id="cb12-27"><a href="#cb12-27" tabindex="-1"></a>)</span>
-<span id="cb12-28"><a href="#cb12-28" tabindex="-1"></a></span>
-<span id="cb12-29"><a href="#cb12-29" tabindex="-1"></a>adface <span class="ot">&lt;-</span> <span class="fu">derive_extreme_records</span>(</span>
-<span id="cb12-30"><a href="#cb12-30" tabindex="-1"></a>  <span class="at">dataset =</span> adface,</span>
-<span id="cb12-31"><a href="#cb12-31" tabindex="-1"></a>  <span class="at">dataset_add =</span> adface,</span>
-<span id="cb12-32"><a href="#cb12-32" tabindex="-1"></a>  <span class="at">filter_add =</span> FAOBJ <span class="sc">==</span> <span class="st">&quot;FEVER&quot;</span>,</span>
-<span id="cb12-33"><a href="#cb12-33" tabindex="-1"></a>  <span class="at">by_vars =</span> <span class="fu">exprs</span>(USUBJID, FAOBJ, ATPTREF),</span>
-<span id="cb12-34"><a href="#cb12-34" tabindex="-1"></a>  <span class="at">order =</span> <span class="fu">exprs</span>(VSSTRESN),</span>
-<span id="cb12-35"><a href="#cb12-35" tabindex="-1"></a>  <span class="at">check_type =</span> <span class="st">&quot;none&quot;</span>,</span>
-<span id="cb12-36"><a href="#cb12-36" tabindex="-1"></a>  <span class="at">mode =</span> <span class="st">&quot;last&quot;</span>,</span>
-<span id="cb12-37"><a href="#cb12-37" tabindex="-1"></a>  <span class="at">set_values_to =</span> <span class="fu">exprs</span>(</span>
-<span id="cb12-38"><a href="#cb12-38" tabindex="-1"></a>    <span class="at">FATEST =</span> <span class="st">&quot;Maximum Temperature&quot;</span>,</span>
-<span id="cb12-39"><a href="#cb12-39" tabindex="-1"></a>    <span class="at">FATESTCD =</span> <span class="st">&quot;MAXTEMP&quot;</span></span>
-<span id="cb12-40"><a href="#cb12-40" tabindex="-1"></a>  )</span>
-<span id="cb12-41"><a href="#cb12-41" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>adface <span class="ot">&lt;-</span> <span class="fu">derive_extreme_records</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  <span class="at">dataset =</span> adface,</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>  <span class="at">dataset_add =</span> adface,</span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>  <span class="at">filter_add =</span> FATESTCD <span class="sc">==</span> <span class="st">&quot;SEV&quot;</span> <span class="sc">&amp;</span> ANL01FL <span class="sc">==</span> <span class="st">&quot;Y&quot;</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>  <span class="at">by_vars =</span> <span class="fu">exprs</span>(USUBJID, FAOBJ, ATPTREF),</span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>  <span class="at">order =</span> <span class="fu">exprs</span>(AVAL),</span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a>  <span class="at">check_type =</span> <span class="st">&quot;none&quot;</span>,</span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a>  <span class="at">mode =</span> <span class="st">&quot;last&quot;</span>,</span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a>  <span class="at">set_values_to =</span> <span class="fu">exprs</span>(</span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a>    <span class="at">FATEST =</span> <span class="st">&quot;Maximum Severity&quot;</span>,</span>
+<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a>    <span class="at">FATESTCD =</span> <span class="st">&quot;MAXSEV&quot;</span></span>
+<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a>  )</span>
+<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a>)</span>
+<span id="cb13-14"><a href="#cb13-14" tabindex="-1"></a></span>
+<span id="cb13-15"><a href="#cb13-15" tabindex="-1"></a>adface <span class="ot">&lt;-</span> <span class="fu">derive_extreme_records</span>(</span>
+<span id="cb13-16"><a href="#cb13-16" tabindex="-1"></a>  <span class="at">dataset =</span> adface,</span>
+<span id="cb13-17"><a href="#cb13-17" tabindex="-1"></a>  <span class="at">dataset_add =</span> adface,</span>
+<span id="cb13-18"><a href="#cb13-18" tabindex="-1"></a>  <span class="at">filter_add =</span> FAOBJ <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;REDNESS&quot;</span>, <span class="st">&quot;SWELLING&quot;</span>) <span class="sc">&amp;</span> FATESTCD <span class="sc">==</span> <span class="st">&quot;DIAMETER&quot;</span> <span class="sc">&amp;</span> ANL01FL <span class="sc">==</span> <span class="st">&quot;Y&quot;</span>,</span>
+<span id="cb13-19"><a href="#cb13-19" tabindex="-1"></a>  <span class="at">by_vars =</span> <span class="fu">exprs</span>(USUBJID, FAOBJ, FALNKGRP),</span>
+<span id="cb13-20"><a href="#cb13-20" tabindex="-1"></a>  <span class="at">order =</span> <span class="fu">exprs</span>(AVAL),</span>
+<span id="cb13-21"><a href="#cb13-21" tabindex="-1"></a>  <span class="at">check_type =</span> <span class="st">&quot;none&quot;</span>,</span>
+<span id="cb13-22"><a href="#cb13-22" tabindex="-1"></a>  <span class="at">mode =</span> <span class="st">&quot;last&quot;</span>,</span>
+<span id="cb13-23"><a href="#cb13-23" tabindex="-1"></a>  <span class="at">set_values_to =</span> <span class="fu">exprs</span>(</span>
+<span id="cb13-24"><a href="#cb13-24" tabindex="-1"></a>    <span class="at">FATEST =</span> <span class="st">&quot;Maximum Diameter&quot;</span>,</span>
+<span id="cb13-25"><a href="#cb13-25" tabindex="-1"></a>    <span class="at">FATESTCD =</span> <span class="st">&quot;MAXDIAM&quot;</span></span>
+<span id="cb13-26"><a href="#cb13-26" tabindex="-1"></a>  )</span>
+<span id="cb13-27"><a href="#cb13-27" tabindex="-1"></a>)</span>
+<span id="cb13-28"><a href="#cb13-28" tabindex="-1"></a></span>
+<span id="cb13-29"><a href="#cb13-29" tabindex="-1"></a>adface <span class="ot">&lt;-</span> <span class="fu">derive_extreme_records</span>(</span>
+<span id="cb13-30"><a href="#cb13-30" tabindex="-1"></a>  <span class="at">dataset =</span> adface,</span>
+<span id="cb13-31"><a href="#cb13-31" tabindex="-1"></a>  <span class="at">dataset_add =</span> adface,</span>
+<span id="cb13-32"><a href="#cb13-32" tabindex="-1"></a>  <span class="at">filter_add =</span> FAOBJ <span class="sc">==</span> <span class="st">&quot;FEVER&quot;</span> <span class="sc">&amp;</span> ANL01FL <span class="sc">==</span> <span class="st">&quot;Y&quot;</span>,</span>
+<span id="cb13-33"><a href="#cb13-33" tabindex="-1"></a>  <span class="at">by_vars =</span> <span class="fu">exprs</span>(USUBJID, FAOBJ, ATPTREF),</span>
+<span id="cb13-34"><a href="#cb13-34" tabindex="-1"></a>  <span class="at">order =</span> <span class="fu">exprs</span>(VSSTRESN),</span>
+<span id="cb13-35"><a href="#cb13-35" tabindex="-1"></a>  <span class="at">check_type =</span> <span class="st">&quot;none&quot;</span>,</span>
+<span id="cb13-36"><a href="#cb13-36" tabindex="-1"></a>  <span class="at">mode =</span> <span class="st">&quot;last&quot;</span>,</span>
+<span id="cb13-37"><a href="#cb13-37" tabindex="-1"></a>  <span class="at">set_values_to =</span> <span class="fu">exprs</span>(</span>
+<span id="cb13-38"><a href="#cb13-38" tabindex="-1"></a>    <span class="at">FATEST =</span> <span class="st">&quot;Maximum Temperature&quot;</span>,</span>
+<span id="cb13-39"><a href="#cb13-39" tabindex="-1"></a>    <span class="at">FATESTCD =</span> <span class="st">&quot;MAXTEMP&quot;</span></span>
+<span id="cb13-40"><a href="#cb13-40" tabindex="-1"></a>  )</span>
+<span id="cb13-41"><a href="#cb13-41" tabindex="-1"></a>)</span></code></pre></div>
 <table>
 <colgroup>
 <col width="9%" />
@@ -1578,11 +1713,11 @@ based on the SDTM <code>--TESTCD</code> value can be created:</p>
 </tbody>
 </table>
 <p>This lookup can now be joined to the source data:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>adface <span class="ot">&lt;-</span> <span class="fu">derive_vars_params</span>(</span>
-<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  <span class="at">dataset =</span> adface,</span>
-<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>  <span class="at">lookup_dataset =</span> lookup_dataset,</span>
-<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>  <span class="at">merge_vars =</span> <span class="fu">exprs</span>(PARAMCD, PARAMN)</span>
-<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>adface <span class="ot">&lt;-</span> <span class="fu">derive_vars_params</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>  <span class="at">dataset =</span> adface,</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>  <span class="at">lookup_dataset =</span> lookup_dataset,</span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>  <span class="at">merge_vars =</span> <span class="fu">exprs</span>(PARAMCD, PARAMN)</span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>)</span></code></pre></div>
 <table>
 <colgroup>
 <col width="6%" />
@@ -1734,23 +1869,24 @@ flag variable for the maximum values of an event.</p>
 <p><code>flag1</code> - Flags the maximum value per subject per event
 per Vaccination. <code>flag2</code> - Flags the maximum value per
 subject per event for Overall.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>adface <span class="ot">&lt;-</span> <span class="fu">derive_vars_max_flag</span>(</span>
-<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>  <span class="at">dataset =</span> adface,</span>
-<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>  <span class="at">flag1 =</span> <span class="st">&quot;ANL01FL&quot;</span>,</span>
-<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>  <span class="at">flag2 =</span> <span class="st">&quot;ANL02FL&quot;</span></span>
-<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>)</span>
-<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a><span class="co">#&gt; Joining with `by = join_by(STUDYID, DOMAIN, USUBJID, FASEQ, FALNKGRP, PARAM,</span></span>
-<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a><span class="co">#&gt; FALAT, FALNKID, FALOC, FATESTCD, FATEST, FAOBJ, FACAT, FASCAT, FAEVAL, FAORRES,</span></span>
-<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a><span class="co">#&gt; FAORRESU, EPOCH, FADTC, FADY, FATPT, FATPTNUM, FATPTREF, FARFTDTC, FAEVLINT,</span></span>
-<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a><span class="co">#&gt; FAEVINTX, FASTAT, FAREASND, FASTRESC, FASTRESN, FASTRESU, RFSTDTC, RFENDTC,</span></span>
-<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a><span class="co">#&gt; VSSTRESN, ADT, ADTM, ADY, APERIOD, APERSDT, APEREDT, TRTA, TRTP, AVALC, AVAL,</span></span>
-<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a><span class="co">#&gt; ATPTREF, ATPT, ATPTN, PARAMCD, PARAMN, PARCAT1, PARCAT2)`</span></span>
-<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a><span class="co">#&gt; Joining with `by = join_by(STUDYID, DOMAIN, USUBJID, FASEQ, FALNKGRP, PARAM,</span></span>
-<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a><span class="co">#&gt; FALAT, FALNKID, FALOC, FATESTCD, FATEST, FAOBJ, FACAT, FASCAT, FAEVAL, FAORRES,</span></span>
-<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a><span class="co">#&gt; FAORRESU, EPOCH, FADTC, FADY, FATPT, FATPTNUM, FATPTREF, FARFTDTC, FAEVLINT,</span></span>
-<span id="cb14-15"><a href="#cb14-15" tabindex="-1"></a><span class="co">#&gt; FAEVINTX, FASTAT, FAREASND, FASTRESC, FASTRESN, FASTRESU, RFSTDTC, RFENDTC,</span></span>
-<span id="cb14-16"><a href="#cb14-16" tabindex="-1"></a><span class="co">#&gt; VSSTRESN, ADT, ADTM, ADY, APERIOD, APERSDT, APEREDT, TRTA, TRTP, AVALC, AVAL,</span></span>
-<span id="cb14-17"><a href="#cb14-17" tabindex="-1"></a><span class="co">#&gt; ATPTREF, ATPT, ATPTN, PARAMCD, PARAMN, PARCAT1, PARCAT2, ANL01FL)`</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>adface <span class="ot">&lt;-</span> <span class="fu">derive_vars_max_flag</span>(</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>  <span class="at">dataset =</span> adface,</span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>  <span class="at">flag1 =</span> <span class="st">&quot;ANL02FL&quot;</span>,</span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>  <span class="at">flag2 =</span> <span class="st">&quot;ANL03FL&quot;</span></span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>)</span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a><span class="co">#&gt; Joining with `by = join_by(STUDYID, DOMAIN, USUBJID, FASEQ, FALNKGRP, PARAM,</span></span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a><span class="co">#&gt; FALAT, FALNKID, FALOC, FATESTCD, FATEST, FAOBJ, FACAT, FASCAT, FAEVAL, FAORRES,</span></span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a><span class="co">#&gt; FAORRESU, EPOCH, FADTC, FADY, FATPT, FATPTNUM, FATPTREF, FARFTDTC, FAEVLINT,</span></span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="co">#&gt; FAEVINTX, FASTAT, FAREASND, FASTRESC, FASTRESN, FASTRESU, CLTYP, RFSTDTC,</span></span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a><span class="co">#&gt; RFENDTC, VSSTRESN, ADT, ADTM, ADY, APERIOD, APERSDT, APEREDT, TRTA, TRTP,</span></span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a><span class="co">#&gt; AVALC, AVAL, ATPTREF, ATPT, ATPTN, ANL01FL, PARAMCD, PARAMN, PARCAT1, PARCAT2)`</span></span>
+<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a><span class="co">#&gt; Joining with `by = join_by(STUDYID, DOMAIN, USUBJID, FASEQ, FALNKGRP, PARAM,</span></span>
+<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a><span class="co">#&gt; FALAT, FALNKID, FALOC, FATESTCD, FATEST, FAOBJ, FACAT, FASCAT, FAEVAL, FAORRES,</span></span>
+<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a><span class="co">#&gt; FAORRESU, EPOCH, FADTC, FADY, FATPT, FATPTNUM, FATPTREF, FARFTDTC, FAEVLINT,</span></span>
+<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a><span class="co">#&gt; FAEVINTX, FASTAT, FAREASND, FASTRESC, FASTRESN, FASTRESU, CLTYP, RFSTDTC,</span></span>
+<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a><span class="co">#&gt; RFENDTC, VSSTRESN, ADT, ADTM, ADY, APERIOD, APERSDT, APEREDT, TRTA, TRTP,</span></span>
+<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a><span class="co">#&gt; AVALC, AVAL, ATPTREF, ATPT, ATPTN, ANL01FL, PARAMCD, PARAMN, PARCAT1, PARCAT2,</span></span>
+<span id="cb15-18"><a href="#cb15-18" tabindex="-1"></a><span class="co">#&gt; ANL02FL)`</span></span></code></pre></div>
 <table>
 <thead>
 <tr class="header">
@@ -1779,7 +1915,7 @@ subject per event for Overall.</p>
 <td align="left">VACCINATION 1</td>
 <td align="right">0</td>
 <td align="left">NONE</td>
-<td align="left">NA</td>
+<td align="left">Y</td>
 <td align="left">NA</td>
 </tr>
 <tr class="odd">
@@ -1797,7 +1933,7 @@ subject per event for Overall.</p>
 <td align="left">VACCINATION 1</td>
 <td align="right">1</td>
 <td align="left">MILD</td>
-<td align="left">NA</td>
+<td align="left">Y</td>
 <td align="left">NA</td>
 </tr>
 <tr class="odd">
@@ -1806,7 +1942,7 @@ subject per event for Overall.</p>
 <td align="left">VACCINATION 1</td>
 <td align="right">1</td>
 <td align="left">MILD</td>
-<td align="left">NA</td>
+<td align="left">Y</td>
 <td align="left">NA</td>
 </tr>
 <tr class="even">
@@ -1815,7 +1951,7 @@ subject per event for Overall.</p>
 <td align="left">VACCINATION 1</td>
 <td align="right">1</td>
 <td align="left">MILD</td>
-<td align="left">NA</td>
+<td align="left">Y</td>
 <td align="left">NA</td>
 </tr>
 <tr class="odd">
@@ -1824,7 +1960,7 @@ subject per event for Overall.</p>
 <td align="left">VACCINATION 1</td>
 <td align="right">1</td>
 <td align="left">MILD</td>
-<td align="left">NA</td>
+<td align="left">Y</td>
 <td align="left">NA</td>
 </tr>
 <tr class="even">
@@ -1833,7 +1969,7 @@ subject per event for Overall.</p>
 <td align="left">VACCINATION 1</td>
 <td align="right">0</td>
 <td align="left">NONE</td>
-<td align="left">NA</td>
+<td align="left">Y</td>
 <td align="left">NA</td>
 </tr>
 <tr class="odd">
@@ -1843,7 +1979,7 @@ subject per event for Overall.</p>
 <td align="right">1</td>
 <td align="left">MILD</td>
 <td align="left">Y</td>
-<td align="left">NA</td>
+<td align="left">Y</td>
 </tr>
 <tr class="even">
 <td align="left">ABC-1002</td>
@@ -1857,7 +1993,7 @@ subject per event for Overall.</p>
 </tbody>
 </table>
 <p>This call would return the input dataset with columns
-<code>ANL01FL</code>, <code>ANL02FL</code> added by default. This
+<code>ANL02FL</code>, <code>ANL03FL</code> added by default. This
 function allows the user to change the name of the new variables
 created.</p>
 </div>
@@ -1868,13 +2004,13 @@ flag variable for the events that occurred.</p>
 <p><code>new_var1</code> - Flags the record if at least one of the event
 occurred within the observation period. <code>new_var2</code> - Flags
 the record if the event is occurred.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>adface <span class="ot">&lt;-</span> <span class="fu">derive_vars_event_flag</span>(</span>
-<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>  <span class="at">dataset =</span> adface,</span>
-<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>  <span class="at">by_vars =</span> <span class="fu">exprs</span>(USUBJID, FAOBJ, ATPTREF),</span>
-<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>  <span class="at">aval_cutoff =</span> <span class="fl">2.5</span>,</span>
-<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>  <span class="at">new_var1 =</span> EVENTFL,</span>
-<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>  <span class="at">new_var2 =</span> EVENTDFL</span>
-<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>adface <span class="ot">&lt;-</span> <span class="fu">derive_vars_event_flag</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>  <span class="at">dataset =</span> adface,</span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>  <span class="at">by_vars =</span> <span class="fu">exprs</span>(USUBJID, FAOBJ, ATPTREF),</span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a>  <span class="at">aval_cutoff =</span> <span class="fl">2.5</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a>  <span class="at">new_var1 =</span> EVENTFL,</span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>  <span class="at">new_var2 =</span> EVENTDFL</span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>)</span></code></pre></div>
 <table>
 <thead>
 <tr class="header">
@@ -1989,26 +2125,26 @@ as well.</p>
 <h2>Post-processing of the Dataset</h2>
 <p>In this step, we will remove values for all the derived records in
 SDTM variables.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>adface <span class="ot">&lt;-</span> <span class="fu">post_process_reacto</span>(</span>
-<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>  <span class="at">dataset =</span> adface,</span>
-<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>  <span class="at">filter_dataset =</span> FATESTCD <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;MAXDIAM&quot;</span>, <span class="st">&quot;MAXSEV&quot;</span>, <span class="st">&quot;MAXTEMP&quot;</span>) <span class="sc">|</span></span>
-<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a>    (FATESTCD <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;OCCUR&quot;</span>, <span class="st">&quot;SEV&quot;</span>) <span class="sc">&amp;</span> FAOBJ <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;FEVER&quot;</span>, <span class="st">&quot;REDNESS&quot;</span>, <span class="st">&quot;SWELLING&quot;</span>))</span>
-<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>adface <span class="ot">&lt;-</span> <span class="fu">post_process_reacto</span>(</span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>  <span class="at">dataset =</span> adface,</span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>  <span class="at">filter_dataset =</span> FATESTCD <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;MAXDIAM&quot;</span>, <span class="st">&quot;MAXSEV&quot;</span>, <span class="st">&quot;MAXTEMP&quot;</span>) <span class="sc">|</span></span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>    (FATESTCD <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;OCCUR&quot;</span>, <span class="st">&quot;SEV&quot;</span>) <span class="sc">&amp;</span> FAOBJ <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;FEVER&quot;</span>, <span class="st">&quot;REDNESS&quot;</span>, <span class="st">&quot;SWELLING&quot;</span>))</span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>)</span></code></pre></div>
 </div>
 <div id="adsl_vars" class="section level2">
 <h2>Add ADSL variables</h2>
 <p>If needed, the other <code>ADSL</code> variables can now be added.
 List of ADSL variables already merged held in vector
 <code>adsl_vars</code></p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>adsl <span class="ot">&lt;-</span> adsl <span class="sc">%&gt;%</span></span>
-<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>  <span class="fu">convert_blanks_to_na</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(USUBJID))</span>
-<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a></span>
-<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>adface <span class="ot">&lt;-</span> <span class="fu">derive_vars_merged</span>(</span>
-<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>  <span class="at">dataset =</span> adface,</span>
-<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a>  <span class="at">dataset_add =</span> <span class="fu">select</span>(adsl, <span class="sc">!!!</span><span class="fu">negate_vars</span>(adsl_vars)),</span>
-<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a>  <span class="at">by_vars =</span> <span class="fu">exprs</span>(STUDYID, USUBJID)</span>
-<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>adsl <span class="ot">&lt;-</span> adsl <span class="sc">%&gt;%</span></span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>  <span class="fu">convert_blanks_to_na</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(USUBJID))</span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a>adface <span class="ot">&lt;-</span> <span class="fu">derive_vars_merged</span>(</span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a>  <span class="at">dataset =</span> adface,</span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a>  <span class="at">dataset_add =</span> <span class="fu">select</span>(adsl, <span class="sc">!!!</span><span class="fu">negate_vars</span>(adsl_vars)),</span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a>  <span class="at">by_vars =</span> <span class="fu">get_admiral_option</span>(<span class="st">&quot;subject_keys&quot;</span>)</span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a>)</span></code></pre></div>
 <table>
 <thead>
 <tr class="header">

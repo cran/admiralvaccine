@@ -467,13 +467,13 @@ programmer. An example mapping for a study without periods may be:</p>
 <span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>    <span class="at">dataset_add =</span> ex,</span>
 <span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>    <span class="at">filter_add =</span> EXLNKGRP <span class="sc">==</span> <span class="st">&quot;VACCINATION 1&quot;</span>,</span>
 <span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>    <span class="at">new_vars =</span> <span class="fu">exprs</span>(<span class="at">TRT01A =</span> EXTRT),</span>
-<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>    <span class="at">by_vars =</span> <span class="fu">exprs</span>(STUDYID, USUBJID)</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>    <span class="at">by_vars =</span> <span class="fu">get_admiral_option</span>(<span class="st">&quot;subject_keys&quot;</span>)</span>
 <span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
 <span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>  <span class="fu">derive_vars_merged</span>(</span>
 <span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>    <span class="at">dataset_add =</span> ex,</span>
 <span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>    <span class="at">filter_add =</span> EXLNKGRP <span class="sc">==</span> <span class="st">&quot;VACCINATION 2&quot;</span>,</span>
 <span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>    <span class="at">new_vars =</span> <span class="fu">exprs</span>(<span class="at">TRT02A =</span> EXTRT),</span>
-<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>    <span class="at">by_vars =</span> <span class="fu">exprs</span>(STUDYID, USUBJID)</span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>    <span class="at">by_vars =</span> <span class="fu">get_admiral_option</span>(<span class="st">&quot;subject_keys&quot;</span>)</span>
 <span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>  )</span></code></pre></div>
 </div>
 <div id="trtdatetime" class="section level2">
@@ -506,7 +506,7 @@ imputation is done by <code>derive_vars_dtm()</code>.</p>
 <span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a>    <span class="at">new_vars =</span> <span class="fu">exprs</span>(<span class="at">TRTSDTM =</span> EXSTDTM),</span>
 <span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a>    <span class="at">order =</span> <span class="fu">exprs</span>(EXSTDTM, EXSEQ),</span>
 <span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a>    <span class="at">mode =</span> <span class="st">&quot;first&quot;</span>,</span>
-<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a>    <span class="at">by_vars =</span> <span class="fu">exprs</span>(STUDYID, USUBJID)</span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a>    <span class="at">by_vars =</span> <span class="fu">get_admiral_option</span>(<span class="st">&quot;subject_keys&quot;</span>)</span>
 <span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
 <span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a>  <span class="fu">derive_vars_merged</span>(</span>
 <span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a>    <span class="at">dataset_add =</span> ex_ext,</span>
@@ -516,7 +516,7 @@ imputation is done by <code>derive_vars_dtm()</code>.</p>
 <span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a>    <span class="at">new_vars =</span> <span class="fu">exprs</span>(<span class="at">TRTEDTM =</span> EXENDTM),</span>
 <span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a>    <span class="at">order =</span> <span class="fu">exprs</span>(EXENDTM, EXSEQ),</span>
 <span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a>    <span class="at">mode =</span> <span class="st">&quot;last&quot;</span>,</span>
-<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a>    <span class="at">by_vars =</span> <span class="fu">exprs</span>(STUDYID, USUBJID)</span>
+<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a>    <span class="at">by_vars =</span> <span class="fu">get_admiral_option</span>(<span class="st">&quot;subject_keys&quot;</span>)</span>
 <span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a>  )</span></code></pre></div>
 <p>This call returns the original data frame with the column
 <code>TRTSDTM</code>, <code>TRTSTMF</code>, <code>TRTEDTM</code>, and
@@ -748,8 +748,8 @@ v5 file(xpt)</a>.</p></li>
 <p>NOTE: All these packages are in the experimental phase, but the
 vision is to have them associated with an End to End pipeline under the
 umbrella of the <a href="https://github.com/pharmaverse">pharmaverse</a>. An example of
-applying metadata and perform associated checks can be found at the <a href="https://examples.pharmaverse.org/data/adsl/">pharmaverse E2E
-example</a>.</p>
+applying metadata and perform associated checks can be found at the <a href="https://pharmaverse.github.io/examples/adam/adsl.html">pharmaverse
+E2E example</a>.</p>
 </div>
 </div>
 <div id="example-script" class="section level1">

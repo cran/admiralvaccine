@@ -39,13 +39,13 @@ adsl <- dm %>%
     dataset_add = ex,
     filter_add = EXLNKGRP == "VACCINATION 1",
     new_vars = exprs(TRT01A = EXTRT),
-    by_vars = exprs(STUDYID, USUBJID)
+    by_vars = get_admiral_option("subject_keys")
   ) %>%
   derive_vars_merged(
     dataset_add = ex,
     filter_add = EXLNKGRP == "VACCINATION 2",
     new_vars = exprs(TRT02A = EXTRT),
-    by_vars = exprs(STUDYID, USUBJID)
+    by_vars = get_admiral_option("subject_keys")
   )
 
 ## ----eval=TRUE----------------------------------------------------------------
@@ -69,7 +69,7 @@ adsl <- adsl %>%
     new_vars = exprs(TRTSDTM = EXSTDTM),
     order = exprs(EXSTDTM, EXSEQ),
     mode = "first",
-    by_vars = exprs(STUDYID, USUBJID)
+    by_vars = get_admiral_option("subject_keys")
   ) %>%
   derive_vars_merged(
     dataset_add = ex_ext,
@@ -79,7 +79,7 @@ adsl <- adsl %>%
     new_vars = exprs(TRTEDTM = EXENDTM),
     order = exprs(EXENDTM, EXSEQ),
     mode = "last",
-    by_vars = exprs(STUDYID, USUBJID)
+    by_vars = get_admiral_option("subject_keys")
   )
 
 ## ----eval=TRUE----------------------------------------------------------------
