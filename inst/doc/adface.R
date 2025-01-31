@@ -36,7 +36,7 @@ face <- face %>%
   metatools::combine_supp(suppface)
 ex <- metatools::combine_supp(ex, suppex)
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 dataset_vignette(
   face,
   display_vars = exprs(USUBJID, FAOBJ, FATESTCD, FACAT, FASCAT, FATPTREF, FADTC)
@@ -51,7 +51,7 @@ adface <- derive_vars_merged_vaccine(
   ex_vars = exprs(EXTRT, EXDOSE, EXSEQ, EXSTDTC, EXENDTC, VISIT, VISITNUM)
 )
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 dataset_vignette(
   adface,
   display_vars = exprs(USUBJID, FAOBJ, FATESTCD, FATPTREF, EXTRT)
@@ -67,7 +67,7 @@ adface <- derive_vars_merged(
   by_vars = get_admiral_option("subject_keys")
 )
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 dataset_vignette(
   adface,
   display_vars = exprs(USUBJID, RFSTDTC, RFENDTC)
@@ -81,7 +81,7 @@ adface <- derive_fever_records(
   faobj = "FEVER"
 )
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 dataset_vignette(
   adface,
   display_vars = exprs(USUBJID, FAOBJ, FATESTCD, FAORRES, VSSTRESN),
@@ -105,7 +105,7 @@ adface <- adface %>%
   mutate(RFSTDTC = as.Date(RFSTDTC)) %>%
   derive_vars_dy(reference_date = RFSTDTC, source_vars = exprs(ADT))
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 dataset_vignette(
   adface,
   display_vars = exprs(USUBJID, FATPTREF, FAOBJ, ADT, ADTM, ADY)
@@ -128,7 +128,7 @@ adface <- derive_vars_joined(
   join_type = "all"
 )
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 dataset_vignette(
   adface,
   display_vars = exprs(USUBJID, APERSDT, APEREDT, TRTA, TRTP)
@@ -156,7 +156,7 @@ adface <- adface %>%
     ATPTN = FATPTNUM
   )
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 dataset_vignette(
   adface,
   display_vars = exprs(USUBJID, FAOBJ, AVAL, AVALC, ATPTREF, ATPTN)
@@ -172,7 +172,7 @@ adface <- adface %>% derive_var_extreme_flag(
   false_value = NA_character_
 )
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 dataset_vignette(
   adface,
   display_vars = exprs(USUBJID, FAOBJ, ATPTREF, FATESTCD, FATEST, AVAL, ANL01FL),
@@ -193,7 +193,7 @@ adface <- derive_diam_to_sev_records(
   sev = 10
 )
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 dataset_vignette(
   adface,
   display_vars = exprs(USUBJID, FAOBJ, ATPTREF, FATESTCD, FATEST, AVAL, AVALC),
@@ -243,7 +243,7 @@ adface <- derive_extreme_records(
   )
 )
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 dataset_vignette(
   adface,
   display_vars = exprs(USUBJID, FAOBJ, ATPTREF, FATESTCD, FATEST, AVAL, AVALC),
@@ -294,7 +294,7 @@ adface <- derive_vars_params(
   merge_vars = exprs(PARAMCD, PARAMN)
 )
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 dataset_vignette(
   adface,
   display_vars = exprs(USUBJID, FAOBJ, ATPTREF, FATEST, PARAMCD, PARAM, PARAMN, PARCAT1, PARCAT2)
@@ -307,7 +307,7 @@ adface <- derive_vars_max_flag(
   flag2 = "ANL03FL"
 )
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 dataset_vignette(
   adface,
   display_vars = exprs(USUBJID, FAOBJ, ATPTREF, AVAL, AVALC, ANL01FL, ANL02FL)
@@ -322,7 +322,7 @@ adface <- derive_vars_event_flag(
   new_var2 = EVENTDFL
 )
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 dataset_vignette(
   adface,
   display_vars = exprs(USUBJID, FAOBJ, ATPTREF, AVAL, AVALC, EVENTFL, EVENTDFL)
@@ -346,7 +346,7 @@ adface <- derive_vars_merged(
   by_vars = get_admiral_option("subject_keys")
 )
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 dataset_vignette(
   adface,
   display_vars = exprs(USUBJID, TRTSDT, TRTEDT, AGE, SEX)

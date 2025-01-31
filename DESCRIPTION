@@ -1,7 +1,7 @@
 Type: Package
 Package: admiralvaccine
 Title: Vaccine Extension Package for ADaM in 'R' Asset Library
-Version: 0.3.0
+Version: 0.4.0
 Authors@R: c(
     person("Sukalpo", "Saha", email = "sukalpo.saha@pfizer.com", role = c("aut", "cre")),
     person("Arjun", "Rubalingam", email = "arjun.rubalingam@pfizer.com", role = "aut"),
@@ -57,12 +57,13 @@ Suggests: covr, devtools, diffdf, DT, knitr, lintr, methods, miniUI,
         pharmaversesdtm, pkgdown, rmarkdown, roxygen2, spelling,
         testthat, tibble, usethis, metatools
 VignetteBuilder: knitr
+Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-US
 LazyData: true
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 NeedsCompilation: no
-Packaged: 2024-08-29 05:11:40 UTC; amrut
+Packaged: 2025-01-31 05:14:48 UTC; sahas56
 Author: Sukalpo Saha [aut, cre],
   Arjun Rubalingam [aut],
   Ben Straub [aut],
@@ -93,4 +94,4 @@ Author: Sukalpo Saha [aut, cre],
   Johnson & Johnson [cph, fnd]
 Maintainer: Sukalpo Saha <sukalpo.saha@pfizer.com>
 Repository: CRAN
-Date/Publication: 2024-08-29 07:30:06 UTC
+Date/Publication: 2025-01-31 09:30:07 UTC

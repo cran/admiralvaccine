@@ -32,7 +32,7 @@ dyn_link <- function(text,
 # Other variables
 admiral_homepage <- "https://pharmaverse.github.io/admiral"
 
-## ---- eval=TRUE, message=FALSE, warning=FALSE---------------------------------
+## ----eval=TRUE, message=FALSE, warning=FALSE----------------------------------
 library(admiral)
 library(dplyr)
 library(lubridate)
@@ -40,7 +40,6 @@ library(admiraldev)
 library(admiralvaccine)
 library(pharmaversesdtm)
 library(metatools)
-library(pharmaversesdtm)
 
 # Load source datasets
 data("is_vaccine")
@@ -81,7 +80,7 @@ adis <- is_suppis %>%
     )
   )
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 dataset_vignette(
   adis,
   display_vars = exprs(USUBJID, VISITNUM, ISTEST, ISORRES, AVISIT, AVISITN, ATPT, ATPTN, ATPTREF)
@@ -114,7 +113,7 @@ adis <- derive_vars_dt(
     source_vars = exprs(ADT)
   )
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 dataset_vignette(
   adis,
   display_vars = exprs(USUBJID, VISITNUM, ISTEST, ISORRES, ISDTC, RFSTDTC, ADT, ADY, PPROTFL)
@@ -189,7 +188,7 @@ adis <- derive_vars_merged_lookup(
   by_vars = exprs(PARAMCD)
 )
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 dataset_vignette(
   adis,
   display_vars = exprs(USUBJID, VISITNUM, ISTEST, ISORRES, PARAMCD, PARAM, PARAMN)
@@ -204,7 +203,7 @@ adis <- adis %>%
     CUTOFF03 = 8
   )
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 dataset_vignette(
   adis,
   display_vars = exprs(USUBJID, VISITNUM, ISTEST, ISORRES, PARCAT1, CUTOFF02, CUTOFF03)
@@ -301,7 +300,7 @@ if (any(names(adis) == "ISULOQ") == FALSE) {
     ))
 }
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 dataset_vignette(
   adis,
   display_vars = exprs(USUBJID, VISITNUM, ISTEST, ISORRES, AVAL, AVALU, DTYPE, SERCAT1, SERCAT1N)
@@ -345,7 +344,7 @@ adis <- adis %>%
     )
   )
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 dataset_vignette(
   adis,
   display_vars = exprs(USUBJID, VISITNUM, ISTEST, ISORRES, ABLFL, BASE, BASETYPE, BASECAT1)
@@ -366,22 +365,29 @@ adis <- restrict_derivation(adis,
   ) %>%
   arrange(STUDYID, USUBJID, DERIVED, ISSEQ)
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 dataset_vignette(
   adis,
   display_vars = exprs(USUBJID, VISITNUM, ISTEST, ISORRES, CHG, R2BASE)
 )
 
 ## ----eval=TRUE----------------------------------------------------------------
-adis <- derive_vars_crit(
+# STEP 9 Derivation of CRITyFL and CRITyFN ----
+adis <- restrict_derivation(
   dataset = adis,
-  prefix = "CRIT1",
-  crit_label = "Titer >= ISLLOQ",
-  condition = !is.na(AVAL) & !is.na(ISLLOQ),
-  criterion = AVAL >= ISLLOQ
-)
+  derivation = derive_vars_crit_flag,
+  args = params(
+    crit_nr = 1,
+    condition = AVAL >= ISLLOQ,
+    description = "Titer >= ISLLOQ",
+    values_yn = TRUE,
+    create_numeric_flag = TRUE
+  ),
+  filter = !is.na(AVAL)
+) %>%
+  arrange(STUDYID, USUBJID, DERIVED, ISSEQ)
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 dataset_vignette(
   adis,
   display_vars = exprs(USUBJID, VISITNUM, ISTEST, ISORRES, CRIT1, CRIT1FL, CRIT1FN)
@@ -401,7 +407,7 @@ adis <- derive_vars_joined(
   join_type = "all"
 )
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 dataset_vignette(
   adis,
   display_vars = exprs(USUBJID, VISITNUM, ISTEST, ISORRES, TRTP, TRTA)
@@ -411,7 +417,7 @@ dataset_vignette(
 adis <- adis %>%
   mutate(PPSRFL = if_else(VISITNUM %in% c(10, 30) & PPROTFL == "Y", "Y", NA_character_))
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 dataset_vignette(
   adis,
   display_vars = exprs(USUBJID, VISITNUM, ISTEST, ISORRES, TRTP, TRTA)
@@ -427,7 +433,7 @@ adis <- derive_vars_merged(
   by_vars = get_admiral_option("subject_keys")
 )
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 dataset_vignette(
   adis,
   display_vars = exprs(USUBJID, VISITNUM, ISTEST, ISORRES, AGE, COUNTRY, ARM, ACTARM)

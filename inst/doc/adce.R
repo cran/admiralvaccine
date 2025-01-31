@@ -2,7 +2,7 @@
 # Other variables
 admiral_homepage <- "https://pharmaverse.github.io/admiral"
 
-## ---- eval=TRUE, message=FALSE, warning=FALSE---------------------------------
+## ----eval=TRUE, message=FALSE, warning=FALSE----------------------------------
 library(admiraldev)
 library(admiral)
 library(dplyr)
@@ -19,7 +19,7 @@ ce <- ce_vaccine
 ce <- convert_blanks_to_na(ce)
 adsl <- convert_blanks_to_na(adsl)
 
-## ---- eval=TRUE, echo=FALSE---------------------------------------------------
+## ----eval=TRUE, echo=FALSE----------------------------------------------------
 dataset_vignette(
   adsl,
   display_vars = exprs(USUBJID, TRTSDT, TRTEDT, TRT01A, AP01SDT, AP01EDT, AP02SDT, AP02EDT)
@@ -38,7 +38,7 @@ adperiods <- create_period_dataset(
   new_vars = exprs(APERSDT = APxxSDT, APEREDT = APxxEDT)
 )
 
-## ---- eval=TRUE, echo=FALSE---------------------------------------------------
+## ----eval=TRUE, echo=FALSE----------------------------------------------------
 dataset_vignette(
   adperiods,
   display_vars = exprs(USUBJID, APERIOD, APERSDT, APEREDT)
@@ -69,7 +69,7 @@ adce <- adce %>%
     source_vars = exprs(ASTDT, AENDT)
   )
 
-## ---- eval=TRUE, echo=FALSE---------------------------------------------------
+## ----eval=TRUE, echo=FALSE----------------------------------------------------
 dataset_vignette(
   adce,
   display_vars = exprs(USUBJID, TRTSDT, CESTDTC, CEENDTC, ASTDT, AENDT, ASTDY, AENDY)
@@ -89,7 +89,7 @@ adce <-
     AREL = CEREL
   )
 
-## ---- eval=TRUE, echo=FALSE---------------------------------------------------
+## ----eval=TRUE, echo=FALSE----------------------------------------------------
 dataset_vignette(
   adce,
   display_vars = exprs(USUBJID, TRTSDT, ASTDT, AENDT, ASTDY, AENDY, APERIOD, APERSDT, APERSTDY)
@@ -114,7 +114,7 @@ adce <- adce %>%
     filter = !is.na(APERIOD) & !is.na(ASEV)
   )
 
-## ---- eval=TRUE, echo=FALSE---------------------------------------------------
+## ----eval=TRUE, echo=FALSE----------------------------------------------------
 dataset_vignette(
   adce,
   display_vars = exprs(
@@ -142,7 +142,7 @@ adce <- adce %>%
     trunc_out = FALSE
   )
 
-## ---- eval=TRUE, echo=FALSE---------------------------------------------------
+## ----eval=TRUE, echo=FALSE----------------------------------------------------
 dataset_vignette(
   adce,
   display_vars = exprs(
@@ -161,7 +161,7 @@ adce <- adce %>%
     by_vars = get_admiral_option("subject_keys")
   )
 
-## ---- eval=TRUE, echo=FALSE---------------------------------------------------
+## ----eval=TRUE, echo=FALSE----------------------------------------------------
 dataset_vignette(
   adce,
   display_vars = exprs(

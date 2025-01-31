@@ -4,7 +4,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-## ---- message=FALSE, warning=FALSE--------------------------------------------
+## ----message=FALSE, warning=FALSE---------------------------------------------
 library(admiral)
 library(admiralvaccine)
 library(pharmaversesdtm)
@@ -23,7 +23,7 @@ ex <- convert_blanks_to_na(ex_vaccine)
 adsl <- dm %>%
   select(-DOMAIN)
 
-## ---- eval=TRUE, echo=FALSE---------------------------------------------------
+## ----eval=TRUE, echo=FALSE----------------------------------------------------
 dataset_vignette(
   adsl,
   display_vars = exprs(USUBJID, RFSTDTC, COUNTRY, AGE, SEX, RACE, ETHNIC, ARM, ACTARM)
@@ -90,7 +90,7 @@ adsl <- adsl %>%
 adsl <- adsl %>%
   derive_var_trtdurd()
 
-## ---- eval=TRUE, echo=FALSE---------------------------------------------------
+## ----eval=TRUE, echo=FALSE----------------------------------------------------
 dataset_vignette(
   adsl,
   display_vars = exprs(USUBJID, RFSTDTC, TRTSDTM, TRTSDT, TRTEDTM, TRTEDT, TRTDURD)
@@ -108,7 +108,7 @@ adsl <- derive_var_merged_exist_flag(
     PPROTFL = "Y"
   )
 
-## ---- eval=TRUE, echo=FALSE---------------------------------------------------
+## ----eval=TRUE, echo=FALSE----------------------------------------------------
 dataset_vignette(
   adsl,
   display_vars = exprs(USUBJID, TRTSDT, ARM, ACTARM, SAFFL, PPROTFL)
@@ -122,7 +122,7 @@ adsl <- derive_vars_vaxdt(
   order = exprs(USUBJID, VISITNUM, VISIT, EXSTDTC)
 )
 
-## ---- eval=TRUE, echo=FALSE---------------------------------------------------
+## ----eval=TRUE, echo=FALSE----------------------------------------------------
 dataset_vignette(
   adsl,
   display_vars = exprs(USUBJID, VAX01DT, VAX02DT)
@@ -137,7 +137,7 @@ adsl <- adsl %>%
     AP02EDT = if_else(!is.na(AP02SDT), as.Date(RFPENDTC), NA_Date_)
   )
 
-## ---- eval=TRUE, echo=FALSE---------------------------------------------------
+## ----eval=TRUE, echo=FALSE----------------------------------------------------
 dataset_vignette(
   adsl,
   display_vars = exprs(USUBJID, AP01SDT, AP01EDT, AP02SDT, AP02EDT)
